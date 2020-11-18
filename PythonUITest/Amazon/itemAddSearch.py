@@ -28,7 +28,8 @@ for keyWord in keyWords:
     dt_now = datetime.datetime.now()
     startDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
     asins = productSearchPage.商品のASINを抜き取る()
-    productSearchPage.fileを出力('/Users/ebata/work/UITest/PythonUITest/outPutFile/asinFor'+str(keyWord)+str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))+'.csv',asins)
+    productSearchPage.fileを出力('/Users/ebata/work/rpa/PythonUITest/outPutFile/asinFor'+str(keyWord)+str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))+'.csv',asins)
+    
     dt_now = datetime.datetime.now()
     endDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
     log = startDateTime+"~"+endDateTime
