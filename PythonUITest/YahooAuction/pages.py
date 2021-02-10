@@ -103,7 +103,6 @@ class MyAuctionPage(BasePage):
     def 発送連絡をして評価をする上(self):
         self.青いボタンを押下()
         self.赤いボタンを押下()
-        self.赤いボタンを押下()
         try:
             text = self.driver.find_element_by_css_selector(self.前回の評価の内容selector).text
             print(str(text)+"があった模様")

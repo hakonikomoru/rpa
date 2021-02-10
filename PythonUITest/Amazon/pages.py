@@ -53,8 +53,12 @@ class AmazonPage(BasePage):
 # ログイン画面操作
 class USSCLoginPage(BasePage):
 
-    def __init__(self, driver):
-        url = "https://sellercentral.amazon.com/"
+    def __init__(self, driver, land):
+        if 'US' in land:
+            url = "https://sellercentral.amazon.com/"
+        elif 'JP' in land:
+            url = 'https://sellercentral.amazon.co.jp/'
+
         super().__init__(driver=driver, url=url)
 
     def ログイン(self, loginId, passWord):
@@ -72,14 +76,18 @@ class USSCLoginPage(BasePage):
 
 class ProductSearchPage(BasePage):
 
-    商品登録画面URL = 'https://sellercentral.amazon.com/product-search?ref=xx_catadd_dnav_xx'
+    アメリカ商品登録画面URL = 'https://sellercentral.amazon.com/product-search?ref=xx_catadd_dnav_xx'
+    日本商品登録画面URL = 'https://sellercentral.amazon.co.jp/product-search?ref=xx_catadd_dnav_xx'
     表示されている商品のselector = '#search-result > div:nth-child(1) > kat-box > div > section.kat-col-xs-4.search-row-title > kat-link > a'
 
     def __init__(self, driver):
         super().__init__(driver=driver)
 
-    def 商品登録画面をURLで直接開く(self):
-        self.driver.get(self.商品登録画面URL)
+    def 商品登録画面をURLで直接開く(self, land):
+        if "US" in land:
+            self.driver.get(self.アメリカ商品登録画面URL)
+        elif "JA" in land:
+            self.driver.get(self.日本商品登録画面URL)
 
     def 検索キーワードを入力して検索する(self, keyWord):
         sleep(3)
@@ -99,21 +107,45 @@ class ProductSearchPage(BasePage):
             self.driver.find_element_by_css_selector(".next.copy-kat-button.secondary").click()
         
 
-    def 商品のASINを抜き取る(self):
+    def 商品のASINを抜き取る(self, land):
         #ASINのDOMを取得して、コンディションが含まれていない場合スキップ
         #含まれていた場合は、出品制限が降りていることになるので、そのASINコードを取得する
         #ASINコードの取得の仕方は、まず「/db/」が入っていることを確認し入ってなかった場合はスキップ
-        #入っていた場合は、「/db/」で分割して2つ目の配列を取れば、ASINコードが抜き取れるのでその抜き取った内容を配列にいれる。
-        asinURL = "http://www.amazon.com/dp/"
+        #入っていた場合は、「/db/」で分割して
+        # 2つ目の配列を取れば、ASINコードが抜き取れるのでその抜き取った内容を配列にいれる。
+        if "US" in land:
+            asinURL = "http://www.amazon.com/dp/"
+        elif "JA" in land:
+            asinURL = "http://www.amazon.co.jp/dp/"
+
         asins = []
-        for n in range(100):
+        # for n in range(100):
+        for n in range(1):
             print(str(n+1)+"ページ目■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
             # 10行表示固定のため、9を明示的に記載
             sleep(5)
             rows = self.driver.find_elements_by_class_name('row')
             for rowDOM in rows:
+                if "出品許可を申請" in rowDOM.text:
+                    print("出品許可を申請あり")
+                    try:
+                        # 出品許可を申請のDOMを取得
+                        regulationBtn = rowDOM.find_element_by_class_name('flex-end')
+                        buttonATag = regulationBtn.find_element_by_tag_name('a').get_attribute("href")
+                        aTag = rowDOM.find_element_by_tag_name('a')
+                        print(aTag.text)
+                        # http://www.amazon.com/dp/を含んでいるURLのみに抽出して配列に入れる
+                        if asinURL in aTag.get_attribute("href"):
+                            print(aTag.get_attribute("href"))
+                            aTagText = aTag.text.replace(',', '|')
+                            aTagText = aTagText.replace('"', '')
+                            asins.append(aTagText+","+buttonATag)
+                            break
+                    except:
+                        print("atagなし")
+                    
                 # ASINURLのみ取得
-                if "コンディションを選択" in rowDOM.text:
+                elif "コンディションを選択" in rowDOM.text:
                     try:
                         aTag = rowDOM.find_element_by_tag_name('a')
                         print(aTag.text)
@@ -125,6 +157,7 @@ class ProductSearchPage(BasePage):
                             asins.append(aTagText+","+aTag.get_attribute("href").split('/dp/')[1])
                     except:
                         print("atagなし")
+
                 elif "バリエーションを表示する" in rowDOM.text:
                     self.driver.find_element_by_name('keyboard_arrow_down').click()
                     # バリーエーションの中の商品DOMを取得
