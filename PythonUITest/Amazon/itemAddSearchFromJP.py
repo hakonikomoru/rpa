@@ -21,34 +21,28 @@ productSearchPage = ProductSearchPage(loginPage.driver)
 # "ZERO JAPAN","Marcato","","","","","","","","","",""
 keyWords = [
                 # 出品制限確認-----------------
-                "APPLE","BenQ Japan","BOSE","BROTHER","CANON","CAPTAIN STAG","CASIO","DJI","EPSON","ELECOM","Ergobaby",
-                "FUJIFILM","GOPRO","Hoppetta","Microsoft","OLYMPUS","PENTAX","RICOH","SIGMA","SONY","TAMRON","coleman",
-                "象印","サーモス","Beats","Casio","Fhilips","GoPro","Nikon","Panasonic","SanDisc","SENNHEISER","Shop Japan",
-                "YAMAHA","A BATHING APE","Abercrombie & Fitch","adidas","BOTTEGA VENETA","BURBERRY","CALVIN KLEIN","CANADA GOOSE",
-                "CHAN LUU","Chloe","Christian Louboutin","COACH","Daniel Wellington","Dior","Dunhill","Ed Hardy","emu","FENDI",
-                "FJALL RAVEN","Giorgio Armani","GOYARD","GUCCI","GUESSS","HUNTER","IL BISONTE","LeSportsac","LONGCHAMP","LOUIS VUITTON",
-                "MARC BY MARC JACOBS","Mila schon","MINNETONKA","MONCLER","NEW BALANCE","NIKE","Orobianco","PANERAI","Paul Smith",
-                "Polo Ralph Lauren","RAY-BAN","Salvatore Ferragamo","TATRAS","TIFFANY","TOD’S","TOMS SHOES","TORY BURCH","Vivienne Westwood",
-                "VANS","アンパンマン","ガンダムフィギュア","グッドスマイルカンパニー","ジブリ","たまごっち","トミカ","トーマス","ディズニー","プラレール","ぽぽちゃん",
-                "りかちゃん","レゴ","BANDAI","LEGO","SEGA","TAKARA TOMY",
+                # "APPLE","BenQ Japan","BOSE","BROTHER","CANON","CAPTAIN STAG","CASIO","DJI","EPSON","ELECOM","Ergobaby",
+                # "FUJIFILM","GOPRO","Hoppetta","Microsoft","OLYMPUS","PENTAX","RICOH","SIGMA","SONY","TAMRON","coleman",
+                # "象印","サーモス","Beats","Casio","Fhilips","GoPro","Nikon","Panasonic","SanDisc","SENNHEISER","Shop Japan",
+                # "YAMAHA","A BATHING APE","Abercrombie & Fitch","adidas","BOTTEGA VENETA","BURBERRY","CALVIN KLEIN","CANADA GOOSE",
+                # "CHAN LUU","Chloe","Christian Louboutin","COACH","Daniel Wellington","Dior","Dunhill","Ed Hardy","emu","FENDI",
+                # "FJALL RAVEN","Giorgio Armani","GOYARD","GUCCI","GUESSS","HUNTER","IL BISONTE","LeSportsac","LONGCHAMP","LOUIS VUITTON",
+                # "MARC BY MARC JACOBS","Mila schon","MINNETONKA","MONCLER","NEW BALANCE","NIKE","Orobianco","PANERAI","Paul Smith",
+                # "Polo Ralph Lauren","RAY-BAN","Salvatore Ferragamo","TATRAS","TIFFANY","TOD’S","TOMS SHOES","TORY BURCH","Vivienne Westwood",
+                # "VANS","アンパンマン","ガンダムフィギュア","グッドスマイルカンパニー","ジブリ","たまごっち","トミカ","トーマス","ディズニー","プラレール","ぽぽちゃん",
+                # "りかちゃん","レゴ","BANDAI","LEGO","SEGA","TAKARA TOMY",
                 # 出品申請許可済み-----------------
-                # "sony",
-                # "SureFire","Coleman",
+                # "sony","SureFire","Coleman",
                 # 出品自由------------------------
-                # "ゲームキューブ コントローラー","ゲームキューブ"
-                # "HORI コントローラー","コントローラー 有線",
+                # "ゲームキューブ コントローラー","ゲームキューブ","HORI コントローラー","コントローラー 有線",
                 # "Playstation Vita","Playstation 3","Playstation 4","Kalita","BEHRINGER","furyu","Slim Walk","Taito",
-                # "Showa Note","Pilot pen","Tamiya","BANDAI","Okada Hardware",
-                # "ZERO JAPAN","ANVISH","Uni Posca","Pilot Frixion","Pentel","Shinwa","Nanoblocks","Uni-ball","Platinum pen",
-                # "Uzaki Nissin","Gel pen","Samior","ELECOM","Dragonfly pen","Shop kit Japanese series",
-                # "Zebra","VESSEL""Midori MD Notebook",
-                # "Asvel","STALOGY","OneOdio","Kokuyo Campus","Senkichi","Chosera","King Grit Waterstone","Meruperu",
-                # "Mikisyo","Sori Yanagi","Mizu","SEGA miku","Re: Zero Rem","bandai hobby","japan import pen","Tomica",
-                # "Nendoroid","kotobukiya","persona","japan import","Yoshikawa","THERMOS",
-                # "OLYMPUS","Hoppetta","japan import Puzzle","ensky","Sunstar",
-                # "Tenyo","Tombo","TC Electronic",
-                # "Chikamasa","ConsoleTuner","Ibanez","BOSS","XYZprinting","Max Factory","EVERNEW","Tamron","Electro-Harmonix",
-                # "ARTISAN","TSUBOE","Square enix"
+                # "Showa Note","Tamiya","BANDAI","Okada Hardware","ZERO JAPAN","ANVISH","Uni Posca","Pilot Frixion",
+                "Shinwa","Nanoblocks","Uzaki Nissin","Gel pen","Samior","ELECOM","VESSEL""Midori MD Notebook",
+                "Asvel","STALOGY","OneOdio","Kokuyo Campus","Senkichi","Chosera","King Grit Waterstone","Meruperu",
+                "Mikisyo","Sori Yanagi","Mizu","SEGA miku","Re: Zero Rem","bandai hobby","japan import pen","Tomica",
+                "Nendoroid","kotobukiya","persona","japan import","Yoshikawa","THERMOS","OLYMPUS","Hoppetta","japan import Puzzle",
+                "ensky","Sunstar","Tenyo","Tombo","TC Electronic","Chikamasa","ConsoleTuner","Ibanez","BOSS","XYZprinting",
+                "Max Factory","EVERNEW","Tamron","Electro-Harmonix","ARTISAN","TSUBOE","Square enix"
             ]
 searchTimeLog = []
 for keyWord in keyWords:
