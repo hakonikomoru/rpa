@@ -2,6 +2,7 @@
 from selenium.webdriver.common.keys import Keys
 import chromedriver_binary
 
+
 class BasePage:
 
     def __init__(self, driver=None, url=None):

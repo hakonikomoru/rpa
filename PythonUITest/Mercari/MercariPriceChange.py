@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import Select
 from MercariLogin import MercariLogin
 import chromedriver_binary
 
+
 class MercariPriceUpChange:
 
     mercariLogin = MercariLogin()
@@ -100,7 +101,6 @@ class MercariPriceUpChange:
             chrome.switch_to.window(handleArray[0])
 
         chrome.close()
-
 
 
 # 起動

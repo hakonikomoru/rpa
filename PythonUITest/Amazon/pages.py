@@ -17,9 +17,9 @@ class AmazonPage(BasePage):
     def ログイン(self, loginId, passWord):
         self.driver.find_element_by_link_text('ログイン').click()
         # 検索語として「selenium」と入力し、Enterキーを押す。
-        search = self.driver.find_element_by_name('email') 
+        search = self.driver.find_element_by_name('email')
         search.send_keys(loginId)
-        search = self.driver.find_element_by_name('password') 
+        search = self.driver.find_element_by_name('password')
         search.send_keys(passWord)
         search.send_keys(Keys.ENTER)
         sleep(40)
@@ -27,13 +27,12 @@ class AmazonPage(BasePage):
 
     def 商品検索(self, searchWord):
         検索ボックスselector = "field-keywords"
-        search = self.driver.find_element_by_name(検索ボックスselector) 
+        search = self.driver.find_element_by_name(検索ボックスselector)
         search.send_keys(searchWord)
         search.send_keys(Keys.ENTER)
 
     def 商品ページからClassNamedでDOMをとる(self, className):
         return self.driver.find_elements_by_class_name(className)
-    
 
     def DOMを回してタグを解析して抽出リストを返す(self, elements):
         outPut = []
@@ -51,6 +50,8 @@ class AmazonPage(BasePage):
         return outPut
 
 # ログイン画面操作
+
+
 class USSCLoginPage(BasePage):
 
     def __init__(self, driver, land):
@@ -64,15 +65,16 @@ class USSCLoginPage(BasePage):
     def ログイン(self, loginId, passWord):
         self.driver.find_element_by_link_text('ログイン').click()
         # 検索語として「selenium」と入力し、Enterキーを押す。
-        search = self.driver.find_element_by_name('email') 
+        search = self.driver.find_element_by_name('email')
         search.send_keys(loginId)
-        search = self.driver.find_element_by_name('password') 
+        search = self.driver.find_element_by_name('password')
         search.send_keys(passWord)
         search.send_keys(Keys.ENTER)
         print("40秒以内にワンタイムパスワードの入力を終えてください。")
         sleep(40)
         print("入力時間終了")
         print("ログイン！！！")
+
 
 class ProductSearchPage(BasePage):
 
@@ -91,12 +93,13 @@ class ProductSearchPage(BasePage):
 
     def 検索キーワードを入力して検索する(self, keyWord):
         sleep(3)
-        search = self.driver.find_element_by_id('katal-id-0') 
+        search = self.driver.find_element_by_id('katal-id-0')
         search.send_keys(keyWord)
         search.send_keys(Keys.ENTER)
 
     def 検索結果件数を取得(self):
-        count = self.driver.find_element_by_css_selector('#product-search-container > div.product-search > div > div.side-nav > div.main-content > div > div.results-header > div > div:nth-child(1)').text.split('件の')[0]
+        count = self.driver.find_element_by_css_selector(
+            '#product-search-container > div.product-search > div > div.side-nav > div.main-content > div > div.results-header > div > div:nth-child(1)').text.split('件の')[0]
         return int(count)/10
 
     def 次へボタンが有効かチェックする(self):
@@ -104,14 +107,14 @@ class ProductSearchPage(BasePage):
 
     def 次へボタンを押下(self):
         if not self.次へボタンが有効かチェックする():
-            self.driver.find_element_by_css_selector(".next.copy-kat-button.secondary").click()
-        
+            self.driver.find_element_by_css_selector(
+                ".next.copy-kat-button.secondary").click()
 
     def 商品のASINを抜き取る(self, land):
-        #ASINのDOMを取得して、コンディションが含まれていない場合スキップ
-        #含まれていた場合は、出品制限が降りていることになるので、そのASINコードを取得する
-        #ASINコードの取得の仕方は、まず「/db/」が入っていることを確認し入ってなかった場合はスキップ
-        #入っていた場合は、「/db/」で分割して
+        # ASINのDOMを取得して、コンディションが含まれていない場合スキップ
+        # 含まれていた場合は、出品制限が降りていることになるので、そのASINコードを取得する
+        # ASINコードの取得の仕方は、まず「/db/」が入っていることを確認し入ってなかった場合はスキップ
+        # 入っていた場合は、「/db/」で分割して
         # 2つ目の配列を取れば、ASINコードが抜き取れるのでその抜き取った内容を配列にいれる。
         if "US" in land:
             asinURL = "http://www.amazon.com/dp/"
@@ -120,8 +123,9 @@ class ProductSearchPage(BasePage):
 
         asins = []
         for n in range(100):
-        # for n in range(1):
-            print(str(n+1)+"ページ目■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
+            # for n in range(1):
+            print(str(
+                n+1)+"ページ目■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
             # 10行表示固定のため、9を明示的に記載
             sleep(5)
             rows = self.driver.find_elements_by_class_name('row')
@@ -130,8 +134,10 @@ class ProductSearchPage(BasePage):
                     print("出品許可を申請あり")
                     try:
                         # 出品許可を申請のDOMを取得
-                        regulationBtn = rowDOM.find_element_by_class_name('flex-end')
-                        buttonATag = regulationBtn.find_element_by_tag_name('a').get_attribute("href")
+                        regulationBtn = rowDOM.find_element_by_class_name(
+                            'flex-end')
+                        buttonATag = regulationBtn.find_element_by_tag_name(
+                            'a').get_attribute("href")
                         aTag = rowDOM.find_element_by_tag_name('a')
                         print(aTag.text)
                         # http://www.amazon.com/dp/を含んでいるURLのみに抽出して配列に入れる
@@ -143,7 +149,7 @@ class ProductSearchPage(BasePage):
                             break
                     except:
                         print("atagなし")
-                    
+
                 # ASINURLのみ取得
                 elif "コンディションを選択" in rowDOM.text:
                     try:
@@ -154,35 +160,41 @@ class ProductSearchPage(BasePage):
                             print(aTag.get_attribute("href"))
                             aTagText = aTag.text.replace(',', '|')
                             aTagText = aTagText.replace('"', '')
-                            asins.append(aTagText+","+aTag.get_attribute("href").split('/dp/')[1])
+                            asins.append(
+                                aTagText+","+aTag.get_attribute("href").split('/dp/')[1])
                     except:
                         print("atagなし")
 
                 elif "バリエーションを表示する" in rowDOM.text:
-                    self.driver.find_element_by_name('keyboard_arrow_down').click()
+                    self.driver.find_element_by_name(
+                        'keyboard_arrow_down').click()
                     # バリーエーションの中の商品DOMを取得
-                    variationRows = self.driver.find_elements_by_class_name("variation-row")
+                    variationRows = self.driver.find_elements_by_class_name(
+                        "variation-row")
                     for variationRowDOM in variationRows:
                         if "コンディションを選択" in variationRowDOM.text:
                             try:
-                                aTag = variationRowDOM.find_element_by_tag_name('a')
+                                aTag = variationRowDOM.find_element_by_tag_name(
+                                    'a')
                                 print(aTag.text)
                                 # http://www.amazon.com/dp/を含んでいるURLのみに抽出して配列に入れる
                                 if asinURL in aTag.get_attribute("href"):
                                     print(aTag.get_attribute("href"))
                                     aTagText = aTag.text.replace(',', '|')
                                     aTagText = aTagText.replace('"', '')
-                                    asins.append(aTagText+","+aTag.get_attribute("href").split('/dp/')[1])
+                                    asins.append(
+                                        aTagText+","+aTag.get_attribute("href").split('/dp/')[1])
                             except:
                                 print("atagなし")
 
             if self.次へボタンが有効かチェックする():
                 break
             self.次へボタンを押下()
-            #pageが表示されるのを待つ
+            # pageが表示されるのを待つ
             sleep(3)
 
         return self.配列内の重複を無くして配列を返す(asins)
+
 
 class TwitterLoginPage(BasePage):
     def __init__(self, driver):
@@ -191,11 +203,12 @@ class TwitterLoginPage(BasePage):
 
     def Twitterログイン(self):
         sleep(5)
-        search = self.driver.find_element_by_name("session[username_or_email]") 
+        search = self.driver.find_element_by_name("session[username_or_email]")
         search.send_keys("premier_teru")
-        search = self.driver.find_element_by_name("session[password]") 
+        search = self.driver.find_element_by_name("session[password]")
         search.send_keys("hnhn8787")
         search.send_keys(Keys.ENTER)
+
 
 class MyAmazonPage(BasePage):
 

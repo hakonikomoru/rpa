@@ -18,9 +18,9 @@ class DisnyTicketBuyPage(BasePage):
     def ログイン(self, loginId, passWord):
         self.driver.find_element_by_link_text('ログイン').click()
         # 検索語として「selenium」と入力し、Enterキーを押す。
-        search = self.driver.find_element_by_name('email') 
+        search = self.driver.find_element_by_name('email')
         search.send_keys(loginId)
-        search = self.driver.find_element_by_name('password') 
+        search = self.driver.find_element_by_name('password')
         search.send_keys(passWord)
         search.send_keys(Keys.ENTER)
         sleep(40)
@@ -28,13 +28,15 @@ class DisnyTicketBuyPage(BasePage):
 
     def 商品検索(self, searchWord):
         検索ボックスselector = "field-keywords"
-        search = self.driver.find_element_by_name(検索ボックスselector) 
+        search = self.driver.find_element_by_name(検索ボックスselector)
         search.send_keys(searchWord)
         search.send_keys(Keys.ENTER)
 
     def 購入手続きに進むボタンを押下する(self):
-        self.driver.find_element_by_css_selector('#search-ticket-group > div > section > section.section-module.section-append > div > ul > li > button').click()
+        self.driver.find_element_by_css_selector(
+            '#search-ticket-group > div > section > section.section-module.section-append > div > ul > li > button').click()
 
     def モーダルの確認したのelementを返す(self):
         actions = ActionChains(self.driver)
-        actions.move_to_element(self.driver.find_element_by_css_selector('body > div.new-ui-theme > div > div > ul > li > button'))
+        actions.move_to_element(self.driver.find_element_by_css_selector(
+            'body > div.new-ui-theme > div > div > ul > li > button'))

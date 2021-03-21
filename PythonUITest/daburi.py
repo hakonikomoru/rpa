@@ -1,7 +1,8 @@
 import datetime
 from time import sleep
 
-nanika = ['B0002E4ZJ6',
+nanika = [
+        'B0002E4ZJ6',
         'B0002E4ZJ6',
         'B0002E4ZJ6',
         'B0002E4ZJ6',

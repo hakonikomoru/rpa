@@ -10,7 +10,7 @@ driver = webdriver.Chrome()
 driver.get("https://www.google.co.jp/")
 
 # 検索語として「selenium」と入力し、Enterキーを押す。
-search = driver.find_element_by_name('q') 
+search = driver.find_element_by_name('q')
 search.send_keys("selenium automation")
 search.send_keys(Keys.ENTER)
 # タイトルに「Selenium - Web Browser Automation」と一致するリンクをクリックする。

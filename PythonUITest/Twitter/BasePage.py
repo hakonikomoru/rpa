@@ -23,5 +23,6 @@ class BasePage:
             for text in outPutArr:
                 f.write(str(text)+"\n")
 
-    def 配列内の重複を無くして配列を返す(self, arr):
+    def 配列内の重複を無くして配列を返す(self,arr):
         return list(set(arr))
+        

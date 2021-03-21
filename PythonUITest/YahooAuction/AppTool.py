@@ -14,7 +14,7 @@ import chromedriver_binary
 driver = webdriver.Chrome()
 appToolPage = AppToolPage(driver)
 appToolPage.open()
-loginPage.ログイン('e_ba_ta_8122@yahoo.co.jp','Kensyo01')
+loginPage.ログイン('e_ba_ta_8122@yahoo.co.jp', 'Kensyo01')
 myAuctionPage = MyAuctionPage(loginPage.driver)
 myAuctionPage.出品終了分画面をURLで直接開く()
 myAuctionPage.評価ボタンを押下()

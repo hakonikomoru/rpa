@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from time import sleep
 from selenium.webdriver.support.ui import Select
 
+
 class WowmaItemDelete:
 
     chrome = webdriver.Chrome()
@@ -26,7 +27,6 @@ class WowmaItemDelete:
         chrome.find_element_by_id("btnSearch").click()
 
         self.chrome = chrome
-
 
     def execute(self):
 
@@ -67,7 +67,8 @@ class WowmaItemDelete:
         sleep(2)
         chrome.find_element_by_link_text("200").click()
 
-        chrome.find_element_by_class_name("wm-checkbox wm-checkbox-nolabel").click()
+        chrome.find_element_by_class_name(
+            "wm-checkbox wm-checkbox-nolabel").click()
 
         # 普通にエレメントを取得する
         saleStatusSelectBox = chrome.find_element_by_name('allSellStsKbnTop')
@@ -83,8 +84,8 @@ class WowmaItemDelete:
         chrome.close()
         exit()
 
-
     # 　Wowma!ワンタイムキー取得
+
     def getOneTimePass(self):
 
         firefox = webdriver.Firefox()
@@ -97,12 +98,11 @@ class WowmaItemDelete:
 
         sleep(1)
 
-        #サイボウズofficeボタンクリック
+        # サイボウズofficeボタンクリック
         serviceslashs = firefox.find_elements_by_class_name("service-slash")
         for serviceslash in serviceslashs:
             serviceslash.click()
             break
-
 
         sleep(2)
         # メールワイズクリック
@@ -127,10 +127,8 @@ class WowmaItemDelete:
         print("ワンタイムパスワード待ち...3分経過")
         print("start！！")
 
-
         searchButton = "/html/body/div[1]/table/tbody/tr/td[3]/form/div/button"
         firefox.find_element_by_xpath(searchButton).click()
-
 
         # linkText = '<img src="https://static.cybozu.com/m/5.4.6.110-20190118/image/mail20.png">'+"\n"+'【Wow! manager】二段階認証ワンタイムキー'
         mailIndexs = firefox.find_element_by_link_text(subject)
@@ -138,9 +136,9 @@ class WowmaItemDelete:
 
         mailText = firefox.find_element_by_tag_name("tt").text
 
-        mailTextArr =  mailText.split("\n")
+        mailTextArr = mailText.split("\n")
 
-        #ワンタイムキー取得
+        # ワンタイムキー取得
         print(mailTextArr[6]+"："+mailTextArr[7])
 
         firefox.close()

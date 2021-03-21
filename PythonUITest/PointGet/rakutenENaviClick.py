@@ -14,7 +14,7 @@ import chromedriver_binary
 driver = webdriver.Chrome()
 rakutenENaviLoginPage = RakutenENaviLoginPage(driver)
 rakutenENaviLoginPage.open()
-rakutenENaviLoginPage.ログイン('syokkotan','hnhn8787')
+rakutenENaviLoginPage.ログイン('syokkotan', 'hnhn8787')
 clickDePointPage = ClickDePointPage(rakutenENaviLoginPage.driver)
 clickDePointPage.aタグをすべてクリック()
 

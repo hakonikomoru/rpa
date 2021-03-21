@@ -16,14 +16,16 @@ class MercariLogin:
         chrome = self.chrome
 
         chrome.maximize_window()
-        chrome.get("https://www.mercari.com/jp/login/?login_callback=https%3A%2F%2Fwww.mercari.com%2Fjp%2F")
+        chrome.get(
+            "https://www.mercari.com/jp/login/?login_callback=https%3A%2F%2Fwww.mercari.com%2Fjp%2F")
         chrome.find_element_by_id("google-login").click()
         sleep(3)
         handleArray = chrome.window_handles
         chrome.switch_to.window(handleArray[1])
         for n in range(10):
             try:
-                chrome.find_element_by_id("identifierId").send_keys("syokkotan@gmail.com")
+                chrome.find_element_by_id(
+                    "identifierId").send_keys("syokkotan@gmail.com")
                 chrome.find_element_by_class_name("CwaK9").click()
                 break
             except:

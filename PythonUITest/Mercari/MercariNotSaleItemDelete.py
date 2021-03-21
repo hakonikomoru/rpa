@@ -7,6 +7,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from MercariLogin import MercariLogin
 
+
 class MercariNotSaleItemDelete:
 
     mercariLogin = MercariLogin()
@@ -31,7 +32,8 @@ class MercariNotSaleItemDelete:
             handleArray = chrome.window_handles
             chrome.switch_to.window(handleArray[1])
             chrome.get(url)
-            changeBox = chrome.find_element_by_class_name("listing-item-change-box")
+            changeBox = chrome.find_element_by_class_name(
+                "listing-item-change-box")
             redform = changeBox.find_element_by_tag_name("form")
             btnRed = redform.find_element_by_tag_name("button").text
             if btnRed == "出品を一旦停止する":
@@ -63,6 +65,7 @@ class MercariNotSaleItemDelete:
 
         chrome.close()
         exit
+
 
 # 起動
 MercariNotSaleItemDelete().execute()
