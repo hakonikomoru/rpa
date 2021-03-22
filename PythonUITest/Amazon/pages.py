@@ -249,3 +249,26 @@ class MyAmazonPage(BasePage):
         handleArray = self.driver.window_handles
         self.driver.close()
         self.driver.switch_to.window(handleArray[0])
+
+
+class AmazonTimeSalePage(BasePage):
+
+    def __init__(self, driver):
+        url = "https://www.amazon.co.jp/deal/7f92b4ad/ref=gbps_rlm_m-8_da49_7f92b4ad?showVariations=true&smid=AN1VRQENFRJN5&pf_rd_p=dc07c715-6714-4621-8dce-d8aeabd7da49&pf_rd_s=merchandised-search-8&pf_rd_t=101&pf_rd_i=5118913051&pf_rd_m=AN1VRQENFRJN5&pf_rd_r=ZVP07VP0HW76DXQBQR0S"
+        super().__init__(driver=driver, url=url)
+
+    def 商品一覧からClassNamedでDOMをとる(self, className):
+        return self.driver.find_elements_by_class_name(className)
+
+    def 商品画面をURLで直接開く(self, url):
+        self.driver.get(url)
+
+    def 次の画面を開く(self):
+        aLasts = self.driver.find_elements_by_class_name("a-last")
+        for aLast in aLasts:
+            try:
+                aLast.find_element_by_tag_name("a").click()
+                break
+            except:
+                continue
+        sleep(5)
