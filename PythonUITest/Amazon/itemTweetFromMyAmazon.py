@@ -6,6 +6,7 @@ from wordpress_xmlrpc import Client, WordPressPost
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from time import sleep
+import datetime
 from pages import MyAmazonPage
 from pages import TwitterLoginPage
 import chromedriver_binary
@@ -31,8 +32,8 @@ for num in range(15):
                 # ASINだけを抜く
                 asins.append(
                     {
-                        "asin": itemsTag.get_attribute(
-                            "href").split('/dp/')[1].split('/')[0],
+                        "asin": str(itemsTag.get_attribute(
+                            "href").split('/dp/')[1].split('/')[0]),
                         "title": itemsTag.find_element_by_tag_name(
                             "img").get_attribute("alt")
                     }
@@ -40,21 +41,14 @@ for num in range(15):
         except:
             continue
 
-    skips = [
-        "B01N12Y2FC"
-        "B08KWGZGD4"
-        "B079M8WTH6"
-        "B06XCSVH7W"
-        "B08KD3B2TK"
-        "B07NDNZ9JN"
-    ]
+    skips = []
     for asin in asins:
         if asin["asin"] not in skips:
             # 値段をとってきたい 画像をとってきたい
-
+            print(asin["asin"])
             # 短縮するAmazonURL生成を入れる
             longUrl = "https://www.amazon.co.jp/dp/"+asin["asin"] + \
-                "ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22&aod=1"
+                "/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22&aod=1"
 
             # エンドポイント
             apiUrl = 'https://api-ssl.bitly.com/v3/shorten'
@@ -70,20 +64,32 @@ for num in range(15):
             wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
                         "syokkotan@gmail.com", "kenyuka128")
             post = WordPressPost()
+            titleSplit = asin["title"]
+            splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
+                      '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】']
+            for split in splits:
+                if split in titleSplit:
+                    titleSplit = titleSplit.replace(split, ' ')
             categorys = ["プレってる", "品薄商品", "品薄"]
-            categorys = categorys+asin["title"].split()
+            categorys = categorys+titleSplit.split()
             title = asin["title"]
             post.title = title+"\n#amazon #"+' #'.join(categorys)
             post.content = title+"\n商品リンク： "+createUrl
             post.terms_names = {'category': categorys}
             post.post_status = 'publish'
             wp.call(NewPost(post))
-            asins.append(asin["asin"])
+            dt_now = datetime.datetime.now()
+            postDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
+            print("投稿時間： "+postDateTime)
+            skips.append(str(asin["asin"]))
 
-            # amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
-            # amazonPage.Twitterボタンを押下()
-            # amazonPage.ツイートボタンを押下()
+    # amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
+    # amazonPage.Twitterボタンを押下()
+    # amazonPage.ツイートボタンを押下()
 print("次回スキップするASIN▼\n")
 print(skips)
 
 amazonPage.close()
+
+
+# 機種依存文字系　https://qiita.com/sta/items/848e7a8c4699a59c604f
