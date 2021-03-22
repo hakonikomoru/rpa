@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import requests
+from wordpress_xmlrpc.methods.users import GetUserInfo
+from wordpress_xmlrpc.methods.posts import GetPosts, NewPost
+from wordpress_xmlrpc import Client, WordPressPost
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from time import sleep
@@ -10,9 +14,9 @@ import chromedriver_binary
 # options.add_argument('--headless')
 # driver = webdriver.Chrome(options=options)
 driver = webdriver.Chrome()
-twitterLoginPage = TwitterLoginPage(driver)
-twitterLoginPage.open()
-twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")
+# twitterLoginPage = TwitterLoginPage(driver)
+# twitterLoginPage.open()
+# twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")
 amazonPage = MyAmazonPage(driver)
 amazonPage.open()
 
@@ -25,22 +29,61 @@ for num in range(15):
         try:
             if "/dp/" in itemsTag.get_attribute("href"):
                 # ASINだけを抜く
-                asins.append(itemsTag.get_attribute(
-                    "href").split('/dp/')[1].split('/')[0])
+                asins.append(
+                    {
+                        "asin": itemsTag.get_attribute(
+                            "href").split('/dp/')[1].split('/')[0],
+                        "title": itemsTag.find_element_by_tag_name(
+                            "img").get_attribute("alt")
+                    }
+                )
         except:
             continue
 
-    print(set(asins))
     skips = [
-        # 'B079M8WTH6', 'B08JYXH1F5', 'B08PT58FS3', 'B01N12Y2FC', 'B06XCSVH7W', 'B00ZOMOJRE', 'B08XYT78VR', 'B07W33QMM4', 'B08TFH24TG', '4798623385', 'B08KWGZGD4', 'B07NDNZ9JN', 'B06XWVHZ8V', 'B08KD3B2TK', 'B08T6JXWMK', 'B08TL5W6C3',
-        # 'B08WHXC3X8', 'B000AR2OYI', 'B08K3BHX2Z', 'B08VCKKD8W', 'B07DB6ZQSL', 'B00QEN65TM', 'B081RVNM49', 'B07Z4BY275', 'B08JYXB2JQ', 'B08SG7H4LX', 'B07TS6LMM7', 'B08JCDFXDW', 'B00ZOMOKVO', 'B0813R6JC6', 'B08SK1PSHD', 'B08TN72BW4',
-        # 'B08RZ6YRB4', 'B08S2RYBL9', 'B08X147ZQD', 'B08HMQ3ZBT', 'B07SJYYXQ6', 'B08SBHDMSC', 'B08RYK64RQ', '4522438478', 'B08R6TMVRJ', 'B08T5TD6YV', 'B08TMV5M78', 'B08T6LCVTK', 'B0123ZAQJE', '4056115249', 'B08T5VKGPT', '4052051033'
+        "B01N12Y2FC"
+        "B08KWGZGD4"
+        "B079M8WTH6"
+        "B06XCSVH7W"
+        "B08KD3B2TK"
+        "B07NDNZ9JN"
     ]
+    for asin in asins:
+        if asin["asin"] not in skips:
+            # 値段をとってきたい 画像をとってきたい
 
-    for asin in set(asins):
-        if asin not in skips:
-            amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
-            amazonPage.Twitterボタンを押下()
-            amazonPage.ツイートボタンを押下()
+            # 短縮するAmazonURL生成を入れる
+            longUrl = "https://www.amazon.co.jp/dp/"+asin["asin"] + \
+                "ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22&aod=1"
+
+            # エンドポイント
+            apiUrl = 'https://api-ssl.bitly.com/v3/shorten'
+            # アクセストークン
+            access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
+            query = {
+                'access_token': access_token,
+                'longurl': longUrl
+            }
+            createUrl = requests.get(apiUrl, params=query).json()[
+                'data']['url']
+
+            wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
+                        "syokkotan@gmail.com", "kenyuka128")
+            post = WordPressPost()
+            categorys = ["プレってる", "品薄商品", "品薄"]
+            categorys = categorys+asin["title"].split()
+            title = asin["title"]
+            post.title = title+"\n#amazon #"+' #'.join(categorys)
+            post.content = title+"\n商品リンク： "+createUrl
+            post.terms_names = {'category': categorys}
+            post.post_status = 'publish'
+            wp.call(NewPost(post))
+            asins.append(asin["asin"])
+
+            # amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
+            # amazonPage.Twitterボタンを押下()
+            # amazonPage.ツイートボタンを押下()
+print("次回スキップするASIN▼\n")
+print(skips)
 
 amazonPage.close()

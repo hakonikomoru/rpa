@@ -11,8 +11,9 @@ import chromedriver_binary
 # driver = webdriver.Chrome(options=options)
 driver = webdriver.Chrome()
 twitterLoginPage = TwitterLoginPage(driver)
+twitterPage = TwitterPage(driver)
 twitterLoginPage.open()
 twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")
-sleep(1000)
-
-twitterLoginPage.close()
+twitterPage.相互フォローアカウントリストを開く()
+twitterPage.表示されたユーザーリストをフォローする()
+twitterPage.close()
