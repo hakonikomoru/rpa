@@ -36,6 +36,7 @@ WordPressに投稿を行ってくれるライブラリ
 
 APIリクエストを行えるライブラリ
 今現在はbitlyのAPIで、URLを短縮するのに使用している
+https://pypi.org/project/requests/
 ```
 % pip3 install requests
 ```
