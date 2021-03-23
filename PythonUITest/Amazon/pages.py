@@ -272,3 +272,15 @@ class AmazonTimeSalePage(BasePage):
             except:
                 continue
         sleep(5)
+
+    def fileを出力(self, path, outPutArr):
+        # pathのファイルへ書き込む
+        with open(path, mode='w') as f:
+            for text in outPutArr:
+                f.write(str(text)+"\n")
+
+    def fileに追記(self, path, mergeArr):
+        # pathのファイルへ書き込む
+        with open(path, mode='a') as f:
+            for text in mergeArr:
+                f.write(str(text)+"\n")

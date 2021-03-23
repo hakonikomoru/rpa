@@ -105,16 +105,23 @@ for url in urls:
             post = WordPressPost()
             titleSplit = asin["title"]
             splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
-                      '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】']
+                      '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】', '[', ']']
             for split in splits:
                 if split in titleSplit:
                     titleSplit = titleSplit.replace(split, ' ')
             categorys = ["Amazonセール", "セール", "セール商品",
                          "新生活", "新生活セール", "新生活応援", "プレってる"]
             categorys = categorys+titleSplit.split()
+
+            if not asin["title"]:
+                continue
+
             title = asin["title"]+"\n#amazon #"+' #'.join(categorys)
             if len(title) > 140:
                 title = title[:-(len(title)-140)]
+            else:
+                continue
+
             post.title = title
             post.content = title+"\n商品リンク： "+createUrl
             post.terms_names = {'category': categorys}
@@ -124,6 +131,8 @@ for url in urls:
             postDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
             print("投稿時間： "+postDateTime)
             skips.append(asin["asin"])
+            amazonPage.fileに追記(
+                '/Users/ebata/UITest/PythonUITest/outPutFile/urls.csv', [asin["asin"]])
 
     # amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
     # amazonPage.Twitterボタンを押下()
