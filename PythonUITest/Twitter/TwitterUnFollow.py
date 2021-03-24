@@ -5,6 +5,7 @@ from time import sleep
 from pages import TwitterLoginPage
 from pages import TwitterPage
 import chromedriver_binary
+from selenium.webdriver.common.keys import Keys
 
 # options = Options()
 # options.add_argument('--headless')
@@ -14,8 +15,7 @@ twitterLoginPage = TwitterLoginPage(driver)
 twitterPage = TwitterPage(driver)
 twitterLoginPage.open()
 twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")
-targets = ['相互フォロー']
-for target in targets:
-    twitterPage.フォローアカウントリストを開く(target)
-    twitterPage.表示されたユーザーリストをフォローする()
+for n in range(10):
+    twitterPage.フォロワーリストを開く('premier_teru')
+    twitterPage.非相互フォロワーをフォローする(50)
 twitterPage.close()

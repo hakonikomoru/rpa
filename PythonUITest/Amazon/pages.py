@@ -4,6 +4,11 @@ from time import sleep
 import chromedriver_binary
 from BasePage import BasePage
 import os
+import datetime
+import requests
+from wordpress_xmlrpc.methods.users import GetUserInfo
+from wordpress_xmlrpc.methods.posts import GetPosts, NewPost
+from wordpress_xmlrpc import Client, WordPressPost
 
 
 # ログイン画面操作
@@ -249,6 +254,103 @@ class MyAmazonPage(BasePage):
         handleArray = self.driver.window_handles
         self.driver.close()
         self.driver.switch_to.window(handleArray[0])
+
+    def 対象縦長ページの商品を投稿する(self, url):
+        skips = []
+        for num in range(15):
+            self.商品画面をURLで直接開く(url+str(num+1))
+            itemsTags = self.商品一覧からClassNamedでDOMをとる("a-link-normal")
+            asins = []
+            for itemsTag in itemsTags:
+                try:
+                    if "/dp/" in itemsTag.get_attribute("href"):
+                        # ASINだけを抜く
+                        asins.append(
+                            {
+                                "asin": str(itemsTag.get_attribute(
+                                    "href").split('/dp/')[1].split('/')[0]),
+                                "title": itemsTag.find_element_by_tag_name(
+                                    "img").get_attribute("alt")
+                            }
+                        )
+                except:
+                    continue
+            
+            for asin in sorted(set(asins), key=asins.index):
+                if asin["asin"] not in skips:
+                    # 値段をとってきたい 画像をとってきたい
+                    # 短縮するAmazonURL生成を入れる
+                    longUrl = "https://www.amazon.co.jp/dp/"+asin["asin"] + \
+                        "/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22&aod=1"
+
+                    # エンドポイント
+                    apiUrl = 'https://api-ssl.bitly.com/v3/shorten'
+                    # アクセストークン
+                    access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
+                    query = {
+                        'access_token': access_token,
+                        'longurl': longUrl
+                    }
+                    createUrl = requests.get(apiUrl, params=query).json()[
+                        'data']['url']
+
+                    wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
+                                "syokkotan@gmail.com", "kenyuka128")
+                    post = WordPressPost()
+                    titleSplit = asin["title"]
+                    splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
+                        '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】', '[', ']']
+                    for split in splits:
+                        if split in titleSplit:
+                            titleSplit = titleSplit.replace(split, ' ')
+                    categorys = ["Amazonセール", "セール", "セール商品",
+                         "新生活", "新生活セール", "新生活応援", "プレってる"]
+                    categorys = categorys+titleSplit.split()
+
+                    if not asin["title"]:
+                        continue
+
+                    title = asin["title"]+"\n#amazon #"+' #'.join(categorys)
+                    if len(title) > 140:
+                        title = title[:-(len(title)-140)]
+                    # else:
+                    #     continue
+
+                    post.title = title
+                    post.content = title+"\n商品リンク： "+createUrl
+                    post.terms_names = {'category': categorys}
+                    # 投稿URL
+                    # post.slug = '自分のサイトのURL'
+                    # サムネイルの指定
+                    # post.thumbnail = ここに画像のIDを指定する
+                    post.post_status = 'publish'
+                    wp.call(NewPost(post))
+                    dt_now = datetime.datetime.now()
+                    postDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
+                    print(asin["title"])
+                    print(asin["asin"])
+                    print("投稿時間： "+postDateTime)
+                    skips.append(asin["asin"])
+                    # self.fileに追記(
+                    #     '/Users/ebata/UITest/PythonUITest/outPutFile/urls.csv', [asin["asin"]])
+                    # amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
+                    # amazonPage.Twitterボタンを押下()
+                    # amazonPage.ツイートボタンを押下()
+        print("次回スキップするASIN▼\n")
+        print(skips)
+        # 機種依存文字系　https://qiita.com/sta/items/848e7a8c4699a59c604f
+
+    def fileを出力(self, path, outPutArr):
+        # pathのファイルへ書き込む
+        with open(path, mode='w') as f:
+            for text in outPutArr:
+                f.write(str(text)+"\n")
+
+    def fileに追記(self, path, mergeArr):
+        # pathのファイルへ書き込む
+        with open(path, mode='a') as f:
+            for text in mergeArr:
+                f.write(str(text)+"\n")
 
 
 class AmazonTimeSalePage(BasePage):

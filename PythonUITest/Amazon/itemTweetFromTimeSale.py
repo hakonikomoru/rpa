@@ -116,15 +116,24 @@ for url in urls:
             if not asin["title"]:
                 continue
 
-            title = asin["title"]+"\n#amazon #"+' #'.join(categorys)
+            title = asin["title"]
+            # ハッシュタグを入れたい場合は入れる↓
+            # title = asin["title"]+"\n#amazon #"+' #'.join(categorys)
+
             if len(title) > 140:
                 title = title[:-(len(title)-140)]
-            else:
-                continue
+            # else:
+            #     continue
 
             post.title = title
-            post.content = title+"\n商品リンク： "+createUrl
+            # ハッシュタグを入れたい場合は入れる↓
+            # post.content = title+"\n商品リンク： "+createUrl
+            post.content = "商品リンク： "+createUrl
             post.terms_names = {'category': categorys}
+            # 投稿URL
+            # post.slug = '自分のサイトのURL'
+            # サムネイルの指定
+            # post.thumbnail = ここに画像のIDを指定する
             post.post_status = 'publish'
             wp.call(NewPost(post))
             dt_now = datetime.datetime.now()
