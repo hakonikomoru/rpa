@@ -12,37 +12,30 @@ import requests
 # 値段をとってきたい
 # 画像をとってきたい
 
-wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
-            "syokkotan@gmail.com", "kenyuka128")
-post = WordPressPost()
 
 # URLを短縮する
-longUrl = "https://amazon.co.jp/gp/product/B08X5NTJSR/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22&aod=1"
-url = 'https://api-ssl.bitly.com/v3/shorten'
-access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
-query = {
-    'access_token': access_token,
-    'longurl': longUrl
-}
-createUrl = requests.get(url, params=query).json()['data']['url']
+# longUrl = "https://amazon.co.jp/gp/product/B08X5NTJSR/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22&aod=1"
+# url = 'https://api-ssl.bitly.com/v3/shorten'
+# access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
+# query = {
+#     'access_token': access_token,
+#     'longurl': longUrl
+# }
+# createUrl = requests.get(url, params=query).json()['data']['url']
 
-
-title = "ポケモンセンターオリジナル スマートフォンショルダー POKÉMON WITH YOUR CHUMS! ポケモン(Pokemon) "
+wp = Client('https://premieritem.wpcomstaging.com/xmlrpc.php',
+            "syokkotan", "kenyuka128")
+post = WordPressPost()
+title = "テスト"
 post.title = title
-post.content = createUrl+"\n#amazon"
+post.content = "aaa"
+# post.content = "<h2>"+createUrl+"\n#amazon</h2>"
+# post.content = '<a href="https://kostrivia.com/531.html">Google</>'
+# post.description = 'This is the body of my new post.'
+# post.tags = 'test, firstpost'
 post.terms_names = {'category': ["プレってる", "品薄商品"]}
-post.post_status = 'publish'
+# post.post_status = 'publish'
+post.post_status = 'draft'
 wp.call(NewPost(post))
-
-# ------------------------ゴミ▼
-# options = Options()
-# options.add_argument('--headless')
-# driver = webdriver.Chrome(options=options)
-# driver = webdriver.Chrome()
-# wordPressLoginPage = WordPressLoginPage(driver)
-# wordPressLoginPage.open()
-# wordPressLoginPage.ログイン("syokkotan@gmail.com", "kenyuka128")
-# wordPressLoginPage.投稿を開く()
-# wordPressLoginPage.投稿する()
-# sleep(1000)
-# wordPressLoginPage.close()
+# 試す
+# https://qiita.com/mima_ita/items/968f22f54c3febd5360f

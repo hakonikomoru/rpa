@@ -25,18 +25,23 @@ amazonPage.商品画面をURLで直接開く(
     'https://www.amazon.co.jp/gp/goldbox?ref_=nav_cs_gb_4421680a68ae4ba2a5c97c993c26b5a6')
 sleep(5)
 urls = []
-for num in range(200):
+
+dt_now = datetime.datetime.now()
+print("タイムセールURL収集開始："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
+for num in range(368):
     buttons = amazonPage.商品一覧からClassNamedでDOMをとる("a-button-inner")
     for button in buttons:
         try:
             url = str(button.find_element_by_tag_name(
                 "a").get_attribute("href"))
             urls.append(url)
-            amazonPage.fileに追記(
-                '/Users/ebata/work/rpa/PythonUITest/outPutFile/urls.csv', [url])
+            # amazonPage.fileに追記(
+            #     '/Users/ebata/work/rpa/PythonUITest/outPutFile/urls.csv', [url])
         except:
             continue
     amazonPage.次の画面を開く()
+dt_now = datetime.datetime.now()
+print("タイムセールURL収集終了："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
 
 skips = []
 for url in urls:
@@ -45,6 +50,8 @@ for url in urls:
     amazonPage.商品画面をURLで直接開く(url)
     itemsTags = amazonPage.商品一覧からClassNamedでDOMをとる("a-link-normal")
     asins = []
+    dt_now = datetime.datetime.now()
+    print("ASIN収集開始："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
     for itemsTag in itemsTags:
         try:
             if "/dp/" in itemsTag.get_attribute("href"):
@@ -52,24 +59,28 @@ for url in urls:
                 asin = str(itemsTag.get_attribute(
                     "href").split('/dp/')[1].split('?')[0])
                 asin = str(asin.split('/')[0])
-                amazonPage.fileに追記(
-                    '/Users/ebata/work/rpa/PythonUITest/outPutFile/asins.csv', [asin])
+                # amazonPage.fileに追記(
+                #     '/Users/ebata/work/rpa/PythonUITest/outPutFile/asins.csv', [asin])
                 asins.append(
                     {
                         "asin": str(asin),
                         "title": itemsTag.get_attribute("title")
                     }
                 )
+                print(asin)
         except:
             continue
+    dt_now = datetime.datetime.now()
+    print("ASIN収集終了："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
 
     for asin in asins:
         if asin["asin"] not in skips:
             # 値段をとってきたい 画像をとってきたい
-            print(asin["asin"])
             # 短縮するAmazonURL生成を入れる
-            longUrl = "https://www.amazon.co.jp/dp/"+asin["asin"] + \
-                "/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22&aod=1"
+            longUrl = "https://www.amazon.co.jp/gp/product/"+asin["asin"]+"/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=premierteru-22&creative=1211&linkCode=as2&creativeASIN="+asin["asin"]
+            # longUrl = "https://www.amazon.co.jp/dp/"+asin["asin"] + \
+            #     "/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22"
+            # &aod=1"
 
             # エンドポイント
             apiUrl = 'https://api-ssl.bitly.com/v3/shorten'
@@ -79,8 +90,7 @@ for url in urls:
                 'access_token': access_token,
                 'longurl': longUrl
             }
-            createUrl = requests.get(apiUrl, params=query).json()[
-                'data']['url']
+            createUrl = requests.get(apiUrl, params=query).json()['data']['url']
 
             wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
                         "syokkotan@gmail.com", "kenyuka128")
@@ -91,15 +101,16 @@ for url in urls:
             for split in splits:
                 if split in titleSplit:
                     titleSplit = titleSplit.replace(split, ' ')
-            categorys = ["タイムセール", "プレってる"]
-            categorys = categorys+titleSplit.split()
+            categorys = ["Amazon", "タイムセール", "プレってる"]
+            # ハッシュタグを入れたい場合は入れる↓
+            # categorys = categorys+titleSplit.split()
 
             if not asin["title"]:
                 continue
 
             title = asin["title"]
             # ハッシュタグを入れたい場合は入れる↓
-            # title = asin["title"]+"\n#amazon #"+' #'.join(categorys)
+            title = asin["title"]+'\n#'+' #'.join(categorys)
 
             if len(title) > 140:
                 title = title[:-(len(title)-140)]

@@ -9,13 +9,24 @@ import chromedriver_binary
 # options = Options()
 # options.add_argument('--headless')
 # driver = webdriver.Chrome(options=options)
+# id = input("TwitterIDを入力してください：")
+# pw = input("TwitterPWを入力してください：")
 driver = webdriver.Chrome()
 twitterLoginPage = TwitterLoginPage(driver)
 twitterPage = TwitterPage(driver)
 twitterLoginPage.open()
+sleep(3)
+# twitterLoginPage.Twitterログイン(id, pw)
+# sleep(3)
 twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")
-targets = ['相互フォロー']
+targets = ['フォロバ','相互フォロー']
 for target in targets:
     twitterPage.フォローアカウントリストを開く(target)
     twitterPage.表示されたユーザーリストをフォローする()
+
+twitterLoginPage.Twitterログイン("ken_channel_nel", "hnhn8787")
+for target in targets:
+    twitterPage.フォローアカウントリストを開く(target)
+    twitterPage.表示されたユーザーリストをフォローする()
+    
 twitterPage.close()

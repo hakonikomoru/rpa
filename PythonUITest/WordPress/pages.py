@@ -47,37 +47,53 @@ class WordPressLoginPage(BasePage):
             except:
                 break
 
-    def 投稿を開く(self):
-        self.driver.get("https://wordpress.com/post/premieritem.wordpress.com")
+    def 投稿一覧を開く(self):
+        self.driver.get("https://wordpress.com/posts/premieritem.wpcomstaging.com")
+        sleep(1)
 
-    def 投稿する(self):
-        # 表示されるまで待機
-        sleep(15)
-        self.driver.find_element_by_id(
-            "post-title-0").send_keys("投稿テスト")
-        # self.driver.execute_script(
-        #     "document.getElementsByClassName('editor-post-title__input')[0].value = '投稿テスト';")
-        # search = self.driver.execute_script(
-        #     "document.getElementById('post-title-0')")
-        # print(nanika)
-        # self.driver.find_element_by_tag_name("textarea").send_keys("投稿テスト")
-        # search =
-        # self.driver.find_element_by_class_name(
-        #     "editor-post-title__input").send_keys("投稿テスト")
-        # search.send_keys("投稿テスト")
-        # print(search)
-        # self.driver.execute_script(
-        #     "document.getElementById('block-082e0522-6f0c-4ce1-bba9-41d3d06f85de').innerHTML = '投稿テスト'")
-        # search = self.driver.find_element_by_id(
-        #     "block-082e0522-6f0c-4ce1-bba9-41d3d06f85de")
-        # search.send_keys("なにか")
+    def ゴミ箱を開く(self):
+        self.driver.get("https://wordpress.com/posts/trashed/premieritem.wpcomstaging.com")
+        sleep(1)
 
-    def 短縮URLを返す(longUrl):
-        url = 'https://api-ssl.bitly.com/v3/shorten'
-        access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
-        query = {
-            'access_token': access_token,
-            'longurl': longUrl
-        }
-        r = requests.get(url, params=query).json()['data']['url']
-        return r
+    def 投稿削除(self):
+        # 一番下までスクロール
+        for num in range(100):
+            print("スクロール："+str(num+1)+"回")
+            self.driver.execute_script('window.scroll(0,1000000)')
+            sleep(1)
+        # 一番上まで戻る
+        self.driver.execute_script('window.scroll(0,0)')
+        sleep(5)
+        for postItem in self.driver.find_elements_by_class_name("post-item"):
+            # 一文字目が#の場合、削除する
+            title = postItem.find_element_by_tag_name(
+                "h1").find_element_by_tag_name(
+                "a").get_attribute("data-e2e-title")
+            if "#" in title[0] or len(title) > 140:
+                print(title)
+                # 消していく
+                postItem.find_element_by_tag_name(
+                "button").click()
+                self.driver.find_element_by_class_name("popover__menu").find_elements_by_tag_name("button")[2].click()
+
+    # こっちは改修が必要
+    def ゴミ箱削除(self):
+        # 一番下までスクロール
+        for num in range(100):
+            print("スクロール："+str(num+1)+"回")
+            self.driver.execute_script('window.scroll(0,1000000)')
+            sleep(1)
+        # 一番上まで戻る
+        self.driver.execute_script('window.scroll(0,0)')
+        sleep(5)
+        for postItem in self.driver.find_elements_by_class_name("post-item"):
+            # 一文字目が#の場合、削除する
+            title = postItem.find_element_by_tag_name(
+                "h1").find_element_by_tag_name(
+                "a").get_attribute("data-e2e-title")
+            if "#" in title[0]:
+                print(title)
+                # 消していく
+                postItem.find_element_by_tag_name(
+                "button").click()
+                self.driver.find_element_by_class_name("popover__menu").find_elements_by_tag_name("button")[2].click()

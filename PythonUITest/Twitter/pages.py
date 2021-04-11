@@ -47,26 +47,26 @@ class TwitterPage(BasePage):
         self.driver.get(
             'https://twitter.com/search?q='+target+'&src=typed_query&f=user'
         )
-    
+
     def フォロワーリストを開く(self, twitterId):
         self.driver.get(
             'https://twitter.com/'+twitterId+'/following'
         )
         sleep(5)
 
-    def 非相互フォロワーをフォローする(self, scrollCount):
+    def 非相互フォロワーをフォロー解除する(self, scrollCount):
         for num in range(scrollCount):
             print("スクロール："+str(num+1)+"回")
             self.driver.execute_script('window.scroll(0,1000000)')
             sleep(1)
-        # 一番上まで戻る
-        self.driver.execute_script('window.scroll(0,0)')
+        
         sleep(5)
         focuss = self.driver.find_elements_by_class_name('css-1dbjc4n')
         for focus in focuss:
             try:
                 if focus.get_attribute("class") == 'css-1dbjc4n' and 'フォロー中' in focus.text:
-                    followerLists = focus.find_element_by_tag_name('div').find_elements_by_tag_name('div')
+                    followerLists = focus.find_element_by_tag_name(
+                        'div').find_elements_by_tag_name('div')
                     for followerList in followerLists:
                         if 'position: absolute; width: 100%; transform: translateY(' not in followerList.get_attribute("style"):
                             continue
@@ -77,7 +77,8 @@ class TwitterPage(BasePage):
                             try:
                                 if "-unfollow" in unfollower.get_attribute("data-testid"):
                                     unfollower.click()
-                                    spans = self.driver.find_elements_by_tag_name('span')
+                                    spans = self.driver.find_elements_by_tag_name(
+                                        'span')
                                     for span in spans:
                                         if "フォロー解除" in span.text:
                                             span.click()
@@ -89,7 +90,8 @@ class TwitterPage(BasePage):
 
     def 表示されたユーザーリストをフォローする(self):
         sleep(10)
-        for scrollCount in range(30):
+        count = 0
+        for scrollCount in range(1):
             for scrollCount in range(30):
                 wait = WebDriverWait(self.driver, 20)
                 # 指定された要素(検索テキストボックス)が表示状態になるまで待機する
@@ -103,13 +105,16 @@ class TwitterPage(BasePage):
                 sleep(1)
 
             for n in range(500):
+                if count > 50:
+                    break
                 self.driver.execute_script('window.scroll(0,1000000)')
                 spanTags = self.driver.find_elements_by_tag_name("span")
                 for spanTag in spanTags:
                     try:
                         if "フォロー" == spanTag.text:
                             spanTag.click()
-                            print('フォローしました')
+                            count = count + 1
+                            print('フォローしました' + str(count))
                             break
                     except:
                         continue
@@ -142,7 +147,7 @@ class TwitterPage(BasePage):
         self.driver.close()
         self.driver.switch_to.window(handleArray[0])
 
-    def 短縮URLを返す(longUrl):
+    def 短縮URLを返す(self, longUrl):
         url = 'https://api-ssl.bitly.com/v3/shorten'
         access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
         query = {

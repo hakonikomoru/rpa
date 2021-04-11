@@ -255,7 +255,7 @@ class MyAmazonPage(BasePage):
         self.driver.close()
         self.driver.switch_to.window(handleArray[0])
 
-    def 対象縦長ページの商品を投稿する(self, url):
+    def 対象縦長ページの商品を投稿する(self, url, domain, aod):
         skips = []
         for num in range(15):
             self.商品画面をURLで直接開く(url+str(num+1))
@@ -275,13 +275,14 @@ class MyAmazonPage(BasePage):
                         )
                 except:
                     continue
-            
-            for asin in sorted(set(asins), key=asins.index):
+
+            for asin in asins:
                 if asin["asin"] not in skips:
                     # 値段をとってきたい 画像をとってきたい
                     # 短縮するAmazonURL生成を入れる
-                    longUrl = "https://www.amazon.co.jp/dp/"+asin["asin"] + \
-                        "/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22&aod=1"
+                    longUrl = "https://www.amazon"+domain+"/gp/product/"+asin["asin"]+"/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=premierteru-22&creative=1211&linkCode=as2&creativeASIN="+asin["asin"]
+                    # longUrl = "https://www.amazon"+domain+"/dp/"+asin["asin"] + \
+                    #     "/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22"+aod
 
                     # エンドポイント
                     apiUrl = 'https://api-ssl.bitly.com/v3/shorten'
@@ -299,22 +300,96 @@ class MyAmazonPage(BasePage):
                     post = WordPressPost()
                     titleSplit = asin["title"]
                     splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
-                        '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】', '[', ']']
+                              '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】', '[', ']']
                     for split in splits:
                         if split in titleSplit:
                             titleSplit = titleSplit.replace(split, ' ')
-                    categorys = ["Amazonセール", "セール", "セール商品",
-                         "新生活", "新生活セール", "新生活応援", "プレってる"]
-                    categorys = categorys+titleSplit.split()
+                    categorys = ["プレってる","Amazon"]
+                    # "Amazonセール", "セール", "セール商品",
+                    # "新生活", "新生活セール", "新生活応援", 
+                    # ハッシュタグを入れたい場合は入れる↓
+                    # categorys = categorys+titleSplit.split()
 
                     if not asin["title"]:
                         continue
 
-                    title = asin["title"]+"\n#amazon #"+' #'.join(categorys)
+                    title = asin["title"]
+                    # ハッシュタグを入れたい場合は入れる↓
+                    title = asin["title"]+'\n#'+' #'.join(categorys)
+
                     if len(title) > 140:
                         title = title[:-(len(title)-140)]
-                    # else:
-                    #     continue
+
+                    post.title = title
+                    post.content = title+"\n商品リンク： "+createUrl
+                    post.terms_names = {'category': categorys}
+                    # 投稿URL
+                    # post.slug = '自分のサイトのURL'
+                    # サムネイルの指定
+                    # post.thumbnail = ここに画像のIDを指定する
+                    post.post_status = 'publish'
+                    wp.call(NewPost(post))
+                    dt_now = datetime.datetime.now()
+                    postDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
+                    print(asin["title"])
+                    print(asin["asin"])
+                    print("投稿時間： "+postDateTime)
+                    skips.append(asin["asin"])
+                    # self.fileに追記(
+                    #     '/Users/ebata/UITest/PythonUITest/outPutFile/urls.csv', [asin["asin"]])
+                    # amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
+                    # amazonPage.Twitterボタンを押下()
+                    # amazonPage.ツイートボタンを押下()
+        print("次回スキップするASIN▼\n")
+        print(skips)
+        # 機種依存文字系　https://qiita.com/sta/items/848e7a8c4699a59c604f
+
+    def 渡したASIN商品を投稿する(self, asins, domain, aod):
+        skips = []
+        for num in range(15):
+            for asin in asins:
+                if asin["asin"] not in skips:
+                    # 値段をとってきたい 画像をとってきたい
+                    # 短縮するAmazonURL生成を入れる
+                    longUrl = "https://www.amazon"+domain+"/gp/product/"+asin["asin"]+"/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=premierteru-22&creative=1211&linkCode=as2&creativeASIN="+asin["asin"]
+                        # longUrl = "https://www.amazon"+domain+"/dp/"+asin["asin"] + \
+                        # "/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22"+aod
+
+                    # エンドポイント
+                    apiUrl = 'https://api-ssl.bitly.com/v3/shorten'
+                    # アクセストークン
+                    access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
+                    query = {
+                        'access_token': access_token,
+                        'longurl': longUrl
+                    }
+                    createUrl = requests.get(apiUrl, params=query).json()[
+                        'data']['url']
+
+                    wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
+                                "syokkotan@gmail.com", "kenyuka128")
+                    post = WordPressPost()
+                    titleSplit = asin["title"]
+                    splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
+                              '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】', '[', ']']
+                    for split in splits:
+                        if split in titleSplit:
+                            titleSplit = titleSplit.replace(split, ' ')
+                    categorys = ["プレってる"]
+                    # "Amazonセール", "セール", "セール商品",
+                    # "新生活", "新生活セール", "新生活応援", 
+                    # ハッシュタグを入れたい場合は入れる↓
+                    # categorys = categorys+titleSplit.split()
+
+                    if not asin["title"]:
+                        continue
+
+                    title = asin["title"]
+                    # ハッシュタグを入れたい場合は入れる↓
+                    title = asin["title"]+'\n#'+' #'.join(categorys)
+
+                    if len(title) > 140:
+                        title = title[:-(len(title)-140)]
 
                     post.title = title
                     post.content = title+"\n商品リンク： "+createUrl

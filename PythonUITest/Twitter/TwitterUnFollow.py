@@ -15,7 +15,10 @@ twitterLoginPage = TwitterLoginPage(driver)
 twitterPage = TwitterPage(driver)
 twitterLoginPage.open()
 twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")
+twitterPage.フォロワーリストを開く('premier_teru')
 for n in range(10):
-    twitterPage.フォロワーリストを開く('premier_teru')
-    twitterPage.非相互フォロワーをフォローする(50)
+    twitterPage.非相互フォロワーをフォロー解除する(20)
+    driver.get(
+        'https://twitter.com/premier_teru/following'
+    )
 twitterPage.close()
