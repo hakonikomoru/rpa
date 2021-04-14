@@ -9,6 +9,7 @@ import requests
 from wordpress_xmlrpc.methods.users import GetUserInfo
 from wordpress_xmlrpc.methods.posts import GetPosts, NewPost
 from wordpress_xmlrpc import Client, WordPressPost
+import tweepy
 
 
 # ログイン画面操作
@@ -256,7 +257,19 @@ class MyAmazonPage(BasePage):
         self.driver.switch_to.window(handleArray[0])
 
     def 対象縦長ページの商品を投稿する(self, url, domain, aod):
+        # 認証に必要なキーとトークン
+        API_KEY = 'tDTjqtriaaN36rqgWiM03dfAP'
+        API_SECRET = 'iXedoTTXfwE0GekR1172VNnAOXmyUXbHJ1riPFdmkL1KSJCTKT'
+        ACCESS_TOKEN = '2876575891-hEPoe4rxnJZcDRbQegiMpBLgEFXutkVjGnwC0dW'
+        ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
+
+        # APIの認証
+        auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
+        auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+        # Twitterオブジェクトの生成
+        api = tweepy.API(auth)
         skips = []
+        postCount = 0
         for num in range(15):
             self.商品画面をURLで直接開く(url+str(num+1))
             itemsTags = self.商品一覧からClassNamedでDOMをとる("a-link-normal")
@@ -304,9 +317,6 @@ class MyAmazonPage(BasePage):
                     for split in splits:
                         if split in titleSplit:
                             titleSplit = titleSplit.replace(split, ' ')
-                    categorys = ["プレってる","Amazon"]
-                    # "Amazonセール", "セール", "セール商品",
-                    # "新生活", "新生活セール", "新生活応援", 
                     # ハッシュタグを入れたい場合は入れる↓
                     # categorys = categorys+titleSplit.split()
 
@@ -315,12 +325,19 @@ class MyAmazonPage(BasePage):
 
                     title = asin["title"]
                     # ハッシュタグを入れたい場合は入れる↓
-                    title = asin["title"]+'\n#'+' #'.join(categorys)
+                    categorys = ["プレってる","Amazon","おすすめ品"]
+                    # "Amazonセール", "セール", "セール商品",
+                    # "新生活", "新生活セール", "新生活応援", 
+                    hashtags = "\n#"+' #'.join(categorys)
+                    minusCount = len(hashtags)
 
-                    if len(title) > 140:
-                        title = title[:-(len(title)-140)]
+                    if len(title) > 140-minusCount:
+                        # 140字から超えている文字数を引いて入れる
+                        title = title[:-(len(title)-140)-minusCount]
+                    # 投稿内容を仕上げる
+                    updatePost = title+hashtags
 
-                    post.title = title
+                    post.title = updatePost
                     post.content = title+"\n商品リンク： "+createUrl
                     post.terms_names = {'category': categorys}
                     # 投稿URL
@@ -330,6 +347,48 @@ class MyAmazonPage(BasePage):
                     post.post_status = 'publish'
                     wp.call(NewPost(post))
                     dt_now = datetime.datetime.now()
+
+                    if postCount > 0 and postCount % 300 == 0:
+                        print("3時間以内に300件投稿を行いました")
+                        print("3時間休憩入ります...")
+                        sleep(1800)
+                        print("30分経過休憩...")
+                        sleep(1800)
+                        print("60分経過休憩...")
+                        sleep(1800)
+                        print("90分経過休憩...")
+                        sleep(1800)
+                        print("120分経過休憩...")
+                        sleep(1800)
+                        print("150分経過休憩...")
+                        sleep(1800)
+                        print("3時間休憩終了！")
+                    try:
+                        # ツイートを投稿
+                        api.update_status(str(updatePost)+"\n"+str(createUrl))
+                        postCount = postCount+1
+                    except Exception as e:
+                        print(e)
+                        if "User is over daily status update limit" in str(e):
+                            print("3時間以内に300件投稿を行いました")
+                            print("3時間休憩入ります...")
+                            sleep(1800)
+                            print("30分経過休憩...")
+                            sleep(1800)
+                            print("60分経過休憩...")
+                            sleep(1800)
+                            print("90分経過休憩...")
+                            sleep(1800)
+                            print("120分経過休憩...")
+                            sleep(1800)
+                            print("150分経過休憩...")
+                            sleep(1800)
+                            print("3時間休憩終了！")
+                            postCount = 0
+                        elif "duplicate" in str(e):
+                            print("重複した投稿内容です")
+                        continue
+                    
                     postDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
                     print(asin["title"])
                     print(asin["asin"])

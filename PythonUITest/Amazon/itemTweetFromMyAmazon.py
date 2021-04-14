@@ -7,10 +7,10 @@ from pages import MyAmazonPage
 from pages import TwitterLoginPage
 import chromedriver_binary
 
-# options = Options()
-# options.add_argument('--headless')
-# driver = webdriver.Chrome(options=options)
-driver = webdriver.Chrome()
+options = Options()
+options.add_argument('--headless')
+driver = webdriver.Chrome(options=options)
+# driver = webdriver.Chrome()
 # twitterLoginPage = TwitterLoginPage(driver)
 # twitterLoginPage.open()
 # twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")

@@ -10,11 +10,24 @@ import datetime
 from pages import AmazonTimeSalePage
 from pages import TwitterLoginPage
 import chromedriver_binary
+import tweepy
 
-# options = Options()
-# options.add_argument('--headless')
-# driver = webdriver.Chrome(options=options)
-driver = webdriver.Chrome()
+# 認証に必要なキーとトークン
+API_KEY = 'tDTjqtriaaN36rqgWiM03dfAP'
+API_SECRET = 'iXedoTTXfwE0GekR1172VNnAOXmyUXbHJ1riPFdmkL1KSJCTKT'
+ACCESS_TOKEN = '2876575891-hEPoe4rxnJZcDRbQegiMpBLgEFXutkVjGnwC0dW'
+ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
+
+# APIの認証
+auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
+auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+# Twitterオブジェクトの生成
+api = tweepy.API(auth)
+
+options = Options()
+options.add_argument('--headless')
+driver = webdriver.Chrome(options=options)
+# driver = webdriver.Chrome()
 # twitterLoginPage = TwitterLoginPage(driver)
 # twitterLoginPage.open()
 # twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")
@@ -29,6 +42,7 @@ urls = []
 dt_now = datetime.datetime.now()
 print("タイムセールURL収集開始："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
 for num in range(368):
+    print(str(num)+"/368回中")
     buttons = amazonPage.商品一覧からClassNamedでDOMをとる("a-button-inner")
     for button in buttons:
         try:
@@ -44,6 +58,7 @@ dt_now = datetime.datetime.now()
 print("タイムセールURL収集終了："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
 
 skips = []
+postCount = 0
 for url in urls:
     if "/dp/" in url:
         continue
@@ -67,7 +82,7 @@ for url in urls:
                         "title": itemsTag.get_attribute("title")
                     }
                 )
-                print(asin)
+                print(asin+"："+str(itemsTag.get_attribute("title")))
         except:
             continue
     dt_now = datetime.datetime.now()
@@ -101,7 +116,6 @@ for url in urls:
             for split in splits:
                 if split in titleSplit:
                     titleSplit = titleSplit.replace(split, ' ')
-            categorys = ["Amazon", "タイムセール", "プレってる"]
             # ハッシュタグを入れたい場合は入れる↓
             # categorys = categorys+titleSplit.split()
 
@@ -110,12 +124,17 @@ for url in urls:
 
             title = asin["title"]
             # ハッシュタグを入れたい場合は入れる↓
-            title = asin["title"]+'\n#'+' #'.join(categorys)
+            categorys = ["Amazon", "タイムセール", "プレってる"]
+            hashtags = "\n#"+' #'.join(categorys)
+            minusCount = len(hashtags)
 
-            if len(title) > 140:
-                title = title[:-(len(title)-140)]
+            if len(title) > 140-minusCount:
+                # 140字から超えている文字数を引いて入れる
+                title = title[:-(len(title)-140)-minusCount]
+            # 投稿内容を仕上げる
+            updatePost = title+hashtags
 
-            post.title = title
+            post.title = updatePost
             # ハッシュタグを入れたい場合は入れる↓
             # post.content = title+"\n商品リンク： "+createUrl
             post.content = "商品リンク： "+createUrl
@@ -127,6 +146,48 @@ for url in urls:
             post.post_status = 'publish'
             wp.call(NewPost(post))
             dt_now = datetime.datetime.now()
+
+            if postCount > 0 and postCount % 300 == 0:
+                print("3時間以内に300件投稿を行いました")
+                print("3時間休憩入ります...")
+                sleep(1800)
+                print("30分経過休憩...")
+                sleep(1800)
+                print("60分経過休憩...")
+                sleep(1800)
+                print("90分経過休憩...")
+                sleep(1800)
+                print("120分経過休憩...")
+                sleep(1800)
+                print("150分経過休憩...")
+                sleep(1800)
+                print("3時間休憩終了！")
+            try:
+                # ツイートを投稿
+                api.update_status(str(updatePost)+"\n"+str(createUrl))
+                postCount = postCount+1
+            except Exception as e:
+                print(e)
+                if "User is over daily status update limit" in str(e):
+                    print("3時間以内に300件投稿を行いました")
+                    print("3時間休憩入ります...")
+                    sleep(1800)
+                    print("30分経過休憩...")
+                    sleep(1800)
+                    print("60分経過休憩...")
+                    sleep(1800)
+                    print("90分経過休憩...")
+                    sleep(1800)
+                    print("120分経過休憩...")
+                    sleep(1800)
+                    print("150分経過休憩...")
+                    sleep(1800)
+                    print("3時間休憩終了！")
+                    postCount = 0
+                elif "duplicate" in str(e):
+                    print("重複した投稿内容です")
+                continue
+              
             postDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
             print("投稿時間： "+postDateTime)
             print("商品名： "+asin["title"])
@@ -143,7 +204,6 @@ print("次回スキップするASIN▼\n")
 print(skips)
 
 amazonPage.close()
-
 
 # 機種依存文字系　https://qiita.com/sta/items/848e7a8c4699a59c604f
 # input()　コマンドで入力ができるらしい

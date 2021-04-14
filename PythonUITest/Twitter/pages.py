@@ -105,9 +105,15 @@ class TwitterPage(BasePage):
                 sleep(1)
 
             for n in range(500):
-                if count > 50:
+                # 24時間でフォローは1000件までなので
+                # 1時間に一回起動するので1時間でフォローできる上限は41件
+                if count > 41:
                     break
-                self.driver.execute_script('window.scroll(0,1000000)')
+                print("ちょいスクロール")
+                self.driver.execute_script('window.scroll(0,0)')
+                for nn in range(10):
+                    self.driver.execute_script('window.scroll(0,15000)')
+                    # self.driver.execute_script('window.scroll(0,100000)')
                 spanTags = self.driver.find_elements_by_tag_name("span")
                 for spanTag in spanTags:
                     try:

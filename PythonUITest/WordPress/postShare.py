@@ -8,7 +8,44 @@ from wordpress_xmlrpc import Client, WordPressPost
 from wordpress_xmlrpc.methods.posts import GetPosts, NewPost
 from wordpress_xmlrpc.methods.users import GetUserInfo
 import requests
+import tweepy
 
+
+# 認証に必要なキーとトークン
+API_KEY = 'tDTjqtriaaN36rqgWiM03dfAP'
+API_SECRET = 'iXedoTTXfwE0GekR1172VNnAOXmyUXbHJ1riPFdmkL1KSJCTKT'
+ACCESS_TOKEN = '2876575891-hEPoe4rxnJZcDRbQegiMpBLgEFXutkVjGnwC0dW'
+ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
+
+# APIの認証
+auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
+auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+# Twitterオブジェクトの生成
+api = tweepy.API(auth)
+
+# ツイートを投稿
+try:
+    api.update_status("テスト投稿")
+except Exception as e:
+    print(e)
+    if "User is over daily status update limit" in str(e):
+        print("3時間以内に300件投稿を行いました")
+    elif "duplicate" in str(e):
+        print("重複した投稿内容です")
+    # 返ってくるやつ
+    # [{'code': 185, 'message': 'User is over daily status update limit.'}]
+    # [{'code': 187, 'message': 'Status is a duplicate.'}]
+
+
+# キーワードからツイートを取得
+# api = tweepy.API(auth)
+# tweets = api.search(q=['Python'], count=10)
+
+# for tweet in tweets:
+#     print('-----------------')
+#     print(tweet.text)
+
+sleep(1000)
 # 値段をとってきたい
 # 画像をとってきたい
 
@@ -39,3 +76,5 @@ post.post_status = 'draft'
 wp.call(NewPost(post))
 # 試す
 # https://qiita.com/mima_ita/items/968f22f54c3febd5360f
+
+
