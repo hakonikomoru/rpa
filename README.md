@@ -54,3 +54,5 @@ TwitterAPIライブラリ「tweepy」をインストール
 ```
 % pip install tweepy
 ```
+
+# 機種依存文字系　https://qiita.com/sta/items/848e7a8c4699a59c604f

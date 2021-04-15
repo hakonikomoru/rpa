@@ -40,9 +40,20 @@ sleep(5)
 urls = []
 
 dt_now = datetime.datetime.now()
+today = datetime.date.today()
+# ASIN重複チェック用ファイルパス
+path = '/Users/ken.ebata/work/rpa/PythonUITest/outPutFile/asins'+str(today)+'.csv'
+# ASIN重複チェック用ファイルを作成して最初にdummyASINを入れておく
+with open(path) as f:
+    oldAsins = f.read()
+if not oldAsins:
+    with open(path, mode='w') as f:
+        f.write("dummy")
 print("タイムセールURL収集開始："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
-for num in range(368):
-    print(str(num)+"/368回中")
+# for num in range(5):
+rangeCount = 200
+for num in range(rangeCount):
+    print(str(num)+"/"+str(rangeCount)+"回中")
     buttons = amazonPage.商品一覧からClassNamedでDOMをとる("a-button-inner")
     for button in buttons:
         try:
@@ -74,20 +85,24 @@ for url in urls:
                 asin = str(itemsTag.get_attribute(
                     "href").split('/dp/')[1].split('?')[0])
                 asin = str(asin.split('/')[0])
+                imageUrl = itemsTag.find_element_by_tag_name("img").get_attribute("src")
                 # amazonPage.fileに追記(
                 #     '/Users/ebata/work/rpa/PythonUITest/outPutFile/asins.csv', [asin])
                 asins.append(
                     {
                         "asin": str(asin),
-                        "title": itemsTag.get_attribute("title")
+                        "title": itemsTag.get_attribute("title"),
+                        "imageUrl": imageUrl
                     }
                 )
                 print(asin+"："+str(itemsTag.get_attribute("title")))
+                print("画像URL："+str(imageUrl))
         except:
             continue
+
     dt_now = datetime.datetime.now()
     print("ASIN収集終了："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
-
+    
     for asin in asins:
         if asin["asin"] not in skips:
             # 値段をとってきたい 画像をとってきたい
@@ -137,15 +152,13 @@ for url in urls:
             post.title = updatePost
             # ハッシュタグを入れたい場合は入れる↓
             # post.content = title+"\n商品リンク： "+createUrl
-            post.content = "商品リンク： "+createUrl
+            post.content = "商品リンク： "+createUrl+"\n"+asin["imageUrl"]
             post.terms_names = {'category': categorys}
             # 投稿URL
             # post.slug = '自分のサイトのURL'
             # サムネイルの指定
             # post.thumbnail = ここに画像のIDを指定する
             post.post_status = 'publish'
-            wp.call(NewPost(post))
-            dt_now = datetime.datetime.now()
 
             if postCount > 0 and postCount % 300 == 0:
                 print("3時間以内に300件投稿を行いました")
@@ -166,6 +179,8 @@ for url in urls:
                 # ツイートを投稿
                 api.update_status(str(updatePost)+"\n"+str(createUrl))
                 postCount = postCount+1
+                wp.call(NewPost(post))
+                dt_now = datetime.datetime.now()
             except Exception as e:
                 print(e)
                 if "User is over daily status update limit" in str(e):
@@ -186,24 +201,23 @@ for url in urls:
                     postCount = 0
                 elif "duplicate" in str(e):
                     print("重複した投稿内容です")
-                continue
-              
+             
             postDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
             print("投稿時間： "+postDateTime)
             print("商品名： "+asin["title"])
             print("ASIN： "+asin["asin"])
-            skips.append(asin["asin"])
+            # ファイルへ一度投稿したASINを追記しておく
+            with open(path, mode='a') as f:
+                f.write(","+str(asin["asin"]))
+
+            # 重複チェック用ファイルを閲覧して重複をなくして再度skipsに格納
+            with open(path) as f:
+                oldAsins = f.read()
+                skips = list(set(oldAsins.split(',')))
 
     # amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
     # amazonPage.Twitterボタンを押下()
     # amazonPage.ツイートボタンを押下()
     amazonPage.次の画面を開く()
 
-
-print("次回スキップするASIN▼\n")
-print(skips)
-
 amazonPage.close()
-
-# 機種依存文字系　https://qiita.com/sta/items/848e7a8c4699a59c604f
-# input()　コマンドで入力ができるらしい

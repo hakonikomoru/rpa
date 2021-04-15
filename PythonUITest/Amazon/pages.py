@@ -283,7 +283,9 @@ class MyAmazonPage(BasePage):
                                 "asin": str(itemsTag.get_attribute(
                                     "href").split('/dp/')[1].split('/')[0]),
                                 "title": itemsTag.find_element_by_tag_name(
-                                    "img").get_attribute("alt")
+                                    "img").get_attribute("alt"),
+                                "imageUrl": itemsTag.find_element_by_tag_name(
+                                    "img").get_attribute("src")
                             }
                         )
                 except:
@@ -451,7 +453,7 @@ class MyAmazonPage(BasePage):
                         title = title[:-(len(title)-140)]
 
                     post.title = title
-                    post.content = title+"\n商品リンク： "+createUrl
+                    post.content = title+"\n商品リンク： "+createUrl+"\n"+asin["imageUrl"]
                     post.terms_names = {'category': categorys}
                     # 投稿URL
                     # post.slug = '自分のサイトのURL'

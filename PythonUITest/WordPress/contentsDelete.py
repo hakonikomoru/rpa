@@ -4,16 +4,23 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 from pages import WordPressLoginPage
 import chromedriver_binary
+from wordpress_xmlrpc import Client, WordPressPost
+from wordpress_xmlrpc.methods.posts import GetPosts, NewPost, DeletePost
+from wordpress_xmlrpc.methods.users import GetUserInfo
+import requests
+import tweepy
+import datetime
 
-options = Options()
-options.add_argument('--headless')
-driver = webdriver.Chrome(options=options)
-driver = webdriver.Chrome()
-wordPressLoginPage = WordPressLoginPage(driver)
-wordPressLoginPage.open()
-wordPressLoginPage.ログイン("syokkotan@gmail.com", "kenyuka128")
-wordPressLoginPage.投稿一覧を開く()
-wordPressLoginPage.投稿削除()
-# wordPressLoginPage.ゴミ箱を開く()
-# wordPressLoginPage.ゴミ箱削除()
-wordPressLoginPage.close()
+wp = Client('https://premieritem.wordpress.com/xmlrpc.php',
+            "syokkotan", "kenyuka128")
+for n in range(99):
+    number = 100
+    offset = 0
+    order = "DESC"
+    # コンテンツ取得
+    contents = wp.call(GetPosts({"number": number, "offset": offset, "order": order}))
+    for content in contents:
+        # コンテンツ削除
+        ret = wp.call(DeletePost(content.id))
+        if ret == 1:
+            print("contentId:"+str(content.id)+" の投稿を削除しました。")

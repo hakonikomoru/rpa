@@ -48,6 +48,11 @@ class TwitterPage(BasePage):
             'https://twitter.com/search?q='+target+'&src=typed_query&f=user'
         )
 
+    def プレってるフォローリスト(self):
+        self.driver.get(
+            'https://twitter.com/premier_teru/following'
+        )
+
     def フォロワーリストを開く(self, twitterId):
         self.driver.get(
             'https://twitter.com/'+twitterId+'/following'
@@ -104,16 +109,16 @@ class TwitterPage(BasePage):
                 self.driver.execute_script('window.scroll(0,1000000)')
                 sleep(1)
 
-            for n in range(500):
+            for n in range(50):
                 # 24時間でフォローは1000件までなので
                 # 1時間に一回起動するので1時間でフォローできる上限は41件
                 if count > 41:
                     break
-                print("ちょいスクロール")
-                self.driver.execute_script('window.scroll(0,0)')
-                for nn in range(10):
-                    self.driver.execute_script('window.scroll(0,15000)')
-                    # self.driver.execute_script('window.scroll(0,100000)')
+                # print("ちょいスクロール")
+                # self.driver.execute_script('window.scroll(0,0)')
+                # for nn in range(10):
+                #     self.driver.execute_script('window.scroll(0,15000)')
+                self.driver.execute_script('window.scroll(0,100000)')
                 spanTags = self.driver.find_elements_by_tag_name("span")
                 for spanTag in spanTags:
                     try:

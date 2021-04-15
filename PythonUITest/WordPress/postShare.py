@@ -5,10 +5,11 @@ from time import sleep
 from pages import WordPressLoginPage
 import chromedriver_binary
 from wordpress_xmlrpc import Client, WordPressPost
-from wordpress_xmlrpc.methods.posts import GetPosts, NewPost
+from wordpress_xmlrpc.methods.posts import GetPosts, NewPost, DeletePost
 from wordpress_xmlrpc.methods.users import GetUserInfo
 import requests
 import tweepy
+import datetime
 
 
 # 認証に必要なキーとトークン
@@ -21,17 +22,17 @@ ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 # Twitterオブジェクトの生成
-api = tweepy.API(auth)
+# api = tweepy.API(auth)
 
 # ツイートを投稿
-try:
-    api.update_status("テスト投稿")
-except Exception as e:
-    print(e)
-    if "User is over daily status update limit" in str(e):
-        print("3時間以内に300件投稿を行いました")
-    elif "duplicate" in str(e):
-        print("重複した投稿内容です")
+# try:
+#     api.update_status("テスト投稿")
+# except Exception as e:
+#     print(e)
+#     if "User is over daily status update limit" in str(e):
+#         print("3時間以内に300件投稿を行いました")
+#     elif "duplicate" in str(e):
+#         print("重複した投稿内容です")
     # 返ってくるやつ
     # [{'code': 185, 'message': 'User is over daily status update limit.'}]
     # [{'code': 187, 'message': 'Status is a duplicate.'}]
@@ -45,7 +46,31 @@ except Exception as e:
 #     print('-----------------')
 #     print(tweet.text)
 
-sleep(1000)
+# def fileを出力(self, path, outPutArr):
+        # pathのファイルへ書き込む
+# asins = ["a","b","cd","cd","cd","cd","cd","cd","cd","a","b","a","b","a","b","a","b"]
+# today = datetime.date.today()
+# path = '/Users/ken.ebata/work/rpa/PythonUITest/outPutFile/asins'+str(today)+'.csv'
+# count = 0
+# with open(path, mode='w') as f:
+#     f.write("dummy")
+
+# with open(path, mode='a') as f:
+#     f.write(","+"aaa")
+        
+# sleep(1000)
+# with open(path) as f:
+#     s = f.read()
+#     # print(type(s))
+#     oldAsins = s.split(',')
+#     print(list(set(oldAsins)))
+#     print("cd" in oldAsins)
+
+# with open(path, mode='a') as f:
+#     for text in mergeArr:
+#         f.write(str(text)+"\n")
+
+
 # 値段をとってきたい
 # 画像をとってきたい
 
@@ -60,20 +85,29 @@ sleep(1000)
 # }
 # createUrl = requests.get(url, params=query).json()['data']['url']
 
-wp = Client('https://premieritem.wpcomstaging.com/xmlrpc.php',
+wp = Client('https://premieritem.wordpress.com/xmlrpc.php',
             "syokkotan", "kenyuka128")
-post = WordPressPost()
-title = "テスト"
-post.title = title
-post.content = "aaa"
+# post = WordPressPost()
+# title = "テスト"
+# post.title = title
+# post.content = "aaa"
 # post.content = "<h2>"+createUrl+"\n#amazon</h2>"
 # post.content = '<a href="https://kostrivia.com/531.html">Google</>'
 # post.description = 'This is the body of my new post.'
 # post.tags = 'test, firstpost'
-post.terms_names = {'category': ["プレってる", "品薄商品"]}
-# post.post_status = 'publish'
-post.post_status = 'draft'
-wp.call(NewPost(post))
+# post.terms_names = {'category': ["プレってる", "品薄商品"]}
+# # post.post_status = 'publish'
+# post.post_status = 'draft'
+# wp.call(NewPost(post))
+number = 10000
+offset = 0
+order = "DESC"
+contents = wp.call(GetPosts({"number": number, "offset": offset, "order": order}))
+for content in contents:
+    ret = wp.call(DeletePost(content.id))
+    if ret == 1:
+        print("contentId:"+str(content.id)+" の投稿を削除しました。")
+# print(ret)
 # 試す
 # https://qiita.com/mima_ita/items/968f22f54c3febd5360f
 
