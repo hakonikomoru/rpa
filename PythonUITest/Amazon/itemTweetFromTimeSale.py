@@ -43,9 +43,12 @@ dt_now = datetime.datetime.now()
 today = datetime.date.today()
 # ASIN重複チェック用ファイルパス
 path = '/Users/ken.ebata/work/rpa/PythonUITest/outPutFile/asins'+str(today)+'.csv'
+titlesPath = '/Users/ken.ebata/work/rpa/PythonUITest/outPutFile/titles.csv'
 # ASIN重複チェック用ファイルを作成して最初にdummyASINを入れておく
+# try:
 with open(path) as f:
     oldAsins = f.read()
+# except:
 if not oldAsins:
     with open(path, mode='w') as f:
         f.write("dummy")
@@ -68,7 +71,8 @@ for num in range(rangeCount):
 dt_now = datetime.datetime.now()
 print("タイムセールURL収集終了："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
 
-skips = []
+skipAsins = []
+skipTitles = []
 postCount = 0
 for url in urls:
     if "/dp/" in url:
@@ -104,7 +108,8 @@ for url in urls:
     print("ASIN収集終了："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
     
     for asin in asins:
-        if asin["asin"] not in skips:
+        if asin["asin"] not in skipAsins:
+        # and asin["title"] not in skipTitles:
             # 値段をとってきたい 画像をとってきたい
             # 短縮するAmazonURL生成を入れる
             longUrl = "https://www.amazon.co.jp/gp/product/"+asin["asin"]+"/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=premierteru-22&creative=1211&linkCode=as2&creativeASIN="+asin["asin"]
@@ -115,15 +120,29 @@ for url in urls:
             # エンドポイント
             apiUrl = 'https://api-ssl.bitly.com/v3/shorten'
             # アクセストークン
-            access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
+            # access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
+            access_token = '405d983e1fe050a09f968c100dae759bd812bdc2'
             query = {
                 'access_token': access_token,
                 'longurl': longUrl
             }
-            createUrl = requests.get(apiUrl, params=query).json()['data']['url']
+            try:
+                createUrl = requests.get(apiUrl, params=query).json()['data']['url']
+            except:
+                access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
+                query = {
+                    'access_token': access_token,
+                    'longurl': longUrl
+                }
+                createUrl = requests.get(apiUrl, params=query).json()['data']['url']
 
-            wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
-                        "syokkotan@gmail.com", "kenyuka128")
+            try:
+                wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
+                           "syokkotan@gmail.com", "kenyuka128")
+            except:
+                wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
+                           "syokkotan@gmail.com", "kenyuka128")
+                           
             post = WordPressPost()
             titleSplit = asin["title"]
             splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
@@ -133,6 +152,14 @@ for url in urls:
                     titleSplit = titleSplit.replace(split, ' ')
             # ハッシュタグを入れたい場合は入れる↓
             # categorys = categorys+titleSplit.split()
+            # ファイルへ一度投稿したASINを追記しておく
+            with open(titlePath, mode='a') as f:
+                f.write(','.join(list(set(titleSplit.split())))
+                                
+            # 重複チェック用ファイルを閲覧して重複をなくして再度skipAsinsに格納
+            with open(titlesPath) as f:
+                readTitles = f.read()
+                skipTitles = list(set(readTitles.split(',')))
 
             if not asin["title"]:
                 continue
@@ -210,10 +237,10 @@ for url in urls:
             with open(path, mode='a') as f:
                 f.write(","+str(asin["asin"]))
 
-            # 重複チェック用ファイルを閲覧して重複をなくして再度skipsに格納
+            # 重複チェック用ファイルを閲覧して重複をなくして再度skipAsinsに格納
             with open(path) as f:
                 oldAsins = f.read()
-                skips = list(set(oldAsins.split(',')))
+                skipAsins = list(set(oldAsins.split(',')))
 
     # amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
     # amazonPage.Twitterボタンを押下()

@@ -13,12 +13,19 @@ import datetime
 
 wp = Client('https://premieritem.wordpress.com/xmlrpc.php',
             "syokkotan", "kenyuka128")
+# post = WordPressPost()
+number = 100
+# post_status = "draft"
+post_status = "publish"
+order = "ASC"
+offset = 0
+# order = "DESC"
 for n in range(99):
-    number = 100
-    offset = 0
-    order = "DESC"
     # コンテンツ取得
-    contents = wp.call(GetPosts({"number": number, "offset": offset, "order": order}))
+    contents = wp.call(GetPosts({"number": number, "offset": offset, "orderby": "post_modified", "order": order, "post_status": post_status}))
+    if not contents:
+        print("コンテンツが無いため終了しました。")
+        break
     for content in contents:
         # コンテンツ削除
         ret = wp.call(DeletePost(content.id))
