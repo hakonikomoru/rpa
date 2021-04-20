@@ -53,6 +53,11 @@ class TwitterPage(BasePage):
             'https://twitter.com/premier_teru/following'
         )
 
+    def カンのフォローリスト(self):
+        self.driver.get(
+            'https://twitter.com/NoGucci110/followers'
+        )
+
     def フォロワーリストを開く(self, twitterId):
         self.driver.get(
             'https://twitter.com/'+twitterId+'/following'
@@ -112,7 +117,7 @@ class TwitterPage(BasePage):
             for n in range(50):
                 # 24時間でフォローは1000件までなので
                 # 1時間に一回起動するので1時間でフォローできる上限は41件
-                if count > 41:
+                if count == 41:
                     break
                 # print("ちょいスクロール")
                 # self.driver.execute_script('window.scroll(0,0)')

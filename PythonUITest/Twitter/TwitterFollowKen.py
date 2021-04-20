@@ -9,8 +9,8 @@ import chromedriver_binary
 import tweepy
 
 for n in range(23):
-    print("1時間休憩します。")
-    sleep(3600)
+    # print("1時間休憩します。")
+    # sleep(3600)
     # options = Options()
     # options.add_argument('--headless')
     # # driver = webdriver.Chrome(options=options)
@@ -21,13 +21,14 @@ for n in range(23):
     sleep(3)
     targets = ['相互フォロー']
     twitterLoginPage.Twitterログイン("ken_channel_nel", "hnhn8787")
-    twitterPage.プレってるフォローリスト()
+    # twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")
+    twitterPage.カンのフォローリスト()
     twitterPage.表示されたユーザーリストをフォローする()
     dt_now = datetime.datetime.now()
     print("時間終了："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
     twitterPage.close()
-    # print("1時間休憩します。")
-    # sleep(3600)
+    print("1時間休憩します。")
+    sleep(3600)
 
 # id = input("TwitterIDを入力してください：")
 # pw = input("TwitterPWを入力してください：")

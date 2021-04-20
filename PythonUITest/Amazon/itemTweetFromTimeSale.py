@@ -56,7 +56,7 @@ print("タイムセールURL収集開始："+str(dt_now.strftime('%Y-%m-%d %H:%M
 # for num in range(5):
 rangeCount = 200
 for num in range(rangeCount):
-    print(str(num)+"/"+str(rangeCount)+"回中")
+    print(str(num+1)+"/"+str(rangeCount)+"回中")
     buttons = amazonPage.商品一覧からClassNamedでDOMをとる("a-button-inner")
     for button in buttons:
         try:
@@ -108,6 +108,24 @@ for url in urls:
     print("ASIN収集終了："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
     
     for asin in asins:
+        # タイトル名で使用されている文言を取得
+        titleSplit = asin["title"]
+        splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
+                    '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】', '[', ']']
+        for split in splits:
+            if split in titleSplit:
+                titleSplit = titleSplit.replace(split, ' ')
+        # ハッシュタグを入れたい場合は入れる↓
+        # categorys = categorys+titleSplit.split()
+        # ファイルへ一度投稿したASINを追記しておく
+        with open(titlesPath, mode='a') as f:
+            ts = str(",".join(list(set(titleSplit.split()))))
+            f.write(ts)
+                            
+        with open(titlesPath) as f:
+            readTitles = f.read()
+            skipTitles = list(set(readTitles.split(',')))
+
         if asin["asin"] not in skipAsins:
         # and asin["title"] not in skipTitles:
             # 値段をとってきたい 画像をとってきたい
@@ -119,22 +137,23 @@ for url in urls:
 
             # エンドポイント
             apiUrl = 'https://api-ssl.bitly.com/v3/shorten'
-            # アクセストークン
-            # access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
-            access_token = '405d983e1fe050a09f968c100dae759bd812bdc2'
-            query = {
-                'access_token': access_token,
-                'longurl': longUrl
-            }
-            try:
-                createUrl = requests.get(apiUrl, params=query).json()['data']['url']
-            except:
-                access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
-                query = {
-                    'access_token': access_token,
-                    'longurl': longUrl
-                }
-                createUrl = requests.get(apiUrl, params=query).json()['data']['url']
+            # bitlyURL短縮サービスアクセストークン
+            accessTokens = [
+                '405d983e1fe050a09f968c100dae759bd812bdc2',
+                'afde27fce5eb37239e25733ed653e9544cd568b3',
+                '2c1124e977a63e564cbd29ff563de3bf01767296',
+                'fd03fa9f33f45661eeb81b51b6cc6f21fb8e50bb'
+            ]
+            
+            for token in accessTokens:
+                try:
+                    query = {
+                        'access_token': token,
+                        'longurl': longUrl
+                    }
+                    createUrl = requests.get(apiUrl, params=query).json()['data']['url']
+                except:
+                    continue
 
             try:
                 wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
@@ -144,22 +163,23 @@ for url in urls:
                            "syokkotan@gmail.com", "kenyuka128")
                            
             post = WordPressPost()
-            titleSplit = asin["title"]
-            splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
-                      '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】', '[', ']']
-            for split in splits:
-                if split in titleSplit:
-                    titleSplit = titleSplit.replace(split, ' ')
-            # ハッシュタグを入れたい場合は入れる↓
-            # categorys = categorys+titleSplit.split()
-            # ファイルへ一度投稿したASINを追記しておく
-            with open(titlePath, mode='a') as f:
-                f.write(','.join(list(set(titleSplit.split())))
+
+            # titleSplit = asin["title"]
+            # splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
+            #           '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】', '[', ']']
+            # for split in splits:
+            #     if split in titleSplit:
+            #         titleSplit = titleSplit.replace(split, ' ')
+            # # ハッシュタグを入れたい場合は入れる↓
+            # # categorys = categorys+titleSplit.split()
+            # # ファイルへ一度投稿したASINを追記しておく
+            # with open(titlesPath, mode='a') as f:
+            #     ts = str(",".join(list(set(titleSplit.split()))))
+            #     f.write(ts)
                                 
-            # 重複チェック用ファイルを閲覧して重複をなくして再度skipAsinsに格納
-            with open(titlesPath) as f:
-                readTitles = f.read()
-                skipTitles = list(set(readTitles.split(',')))
+            # with open(titlesPath) as f:
+            #     readTitles = f.read()
+            #     skipTitles = list(set(readTitles.split(',')))
 
             if not asin["title"]:
                 continue
