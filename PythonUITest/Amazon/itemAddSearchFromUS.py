@@ -26,7 +26,11 @@ keyWords = [
     # "LED Lenser","Ledlenser","Lodge","New Metro Design","Norpro","Oxo Good Grips","Palais Glassware","Proctor Silex","Roommates","Rtic","simplehuman","Weber","Wilton","Yumco","Adidas","Asics","Clarks Shoes","Converse Shoes","Crocs","Keen","Nike","Puma","Skechers","Sperry","Toms Shoes","Uggs","Alex And Ani","American Tourister","Petsafe","Wahl",
     # favoriteリスト------------------
     # "Playstation Vita","Playstation 3","Playstation 4","Kalita","BEHRINGER","furyu","Slim Walk","Taito",
-    # "Showa Note","Pilot pen","Tamiya","BANDAI","sony","Okada Hardware",
+    # "Showa Note","Pilot pen","BANDAI","sony","Okada Hardware",
+    # "HORI Nintendo",
+    "FOTS","Hobby JAPAN","MEISTER JAPAN","Hnafuda Flower Cards","Kaiyodo","Digital Monster","Final Fantasy","Fujiya"
+    # "Tamiya"
+    # , "DAISO"
     # "ZEROJAPAN","ANVISH","Uni Posca","Pilot Frixion","Marcato","Pentel","Shinwa","Nanoblocks","Uni-ball","Platinum pen",
     # "Uzaki Nissin","Gel pen","Samior","ELECOM","Dragonfly pen","Shop kit Japanese series",
     # "Zebra","VESSEL""Midori MD Notebook",
@@ -47,7 +51,8 @@ for keyWord in keyWords:
     dt_now = datetime.datetime.now()
     startDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
     asins = productSearchPage.商品のASINを抜き取る('US')
-    productSearchPage.fileを出力('/Users/ebata/Dropbox/sellBuy/outPutFile/US/asinFor'+str(
+    # /Users/ken.ebata/Dropbox/sellBuy/outPutFile/US
+    productSearchPage.fileを出力('/Users/ken.ebata/Dropbox/sellBuy/outPutFile/US/asinFor'+str(
         keyWord)+str(dt_now.strftime('%Y-%m-%d %H:%M'))+'.csv', asins)
 
     dt_now = datetime.datetime.now()

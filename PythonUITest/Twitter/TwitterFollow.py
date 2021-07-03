@@ -20,11 +20,11 @@ auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 # Twitterオブジェクトの生成
 api = tweepy.API(auth)
 
-# searchKeyword = "相互フォロー"
+searchKeyword = "相互フォロー"
 # もうちょっとフォロワー増やしたら、アウトバウンドで他検索でフォローし始める
 # searchKeyword = "せどり"
 # searchKeyword = "転売"
-searchKeyword = "メルカリ転売"
+# searchKeyword = "メルカリ転売"
 searchLimit = 100
 
 # 検索実行

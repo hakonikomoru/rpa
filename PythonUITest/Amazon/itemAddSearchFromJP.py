@@ -35,14 +35,18 @@ keyWords = [
     # "sony","SureFire","Coleman",
     # 出品自由------------------------
     # "ゲームキューブ コントローラー","ゲームキューブ","HORI コントローラー","コントローラー 有線",
+    "HORI Nintendo",
+    "FOTS","Hobby JAPAN","MEISTER JAPAN","Hnafuda Flower Cards","Kaiyodo","Digital Monster","Final Fantasy","Fujiya"
     # "Playstation Vita","Playstation 3","Playstation 4","Kalita","BEHRINGER","furyu","Slim Walk","Taito",
-    # "Showa Note","Tamiya","BANDAI","Okada Hardware","ZERO JAPAN","ANVISH","Uni Posca","Pilot Frixion",
-    "Shinwa", "Nanoblocks", "Uzaki Nissin", "Gel pen", "Samior", "ELECOM", "VESSEL""Midori MD Notebook",
-    "Asvel", "STALOGY", "OneOdio", "Kokuyo Campus", "Senkichi", "Chosera", "King Grit Waterstone", "Meruperu",
-    "Mikisyo", "Sori Yanagi", "Mizu", "SEGA miku", "Re: Zero Rem", "bandai hobby", "japan import pen", "Tomica",
-    "Nendoroid", "kotobukiya", "persona", "japan import", "Yoshikawa", "THERMOS", "OLYMPUS", "Hoppetta", "japan import Puzzle",
-    "ensky", "Sunstar", "Tenyo", "Tombo", "TC Electronic", "Chikamasa", "ConsoleTuner", "Ibanez", "BOSS", "XYZprinting",
-    "Max Factory", "EVERNEW", "Tamron", "Electro-Harmonix", "ARTISAN", "TSUBOE", "Square enix"
+    # "Showa Note","BANDAI","Okada Hardware","ZERO JAPAN","ANVISH","Uni Posca","Pilot Frixion",
+    # "DAISO",
+    # "Tamiya"
+    # ,"Shinwa", "Nanoblocks", "Uzaki Nissin", "Gel pen", "Samior", "ELECOM", "VESSEL""Midori MD Notebook",
+    # "Asvel", "STALOGY", "OneOdio", "Kokuyo Campus", "Senkichi", "Chosera", "King Grit Waterstone", "Meruperu",
+    # "Mikisyo", "Sori Yanagi", "Mizu", "SEGA miku", "Re: Zero Rem", "bandai hobby", "japan import pen", "Tomica",
+    # "Nendoroid", "kotobukiya", "persona", "japan import", "Yoshikawa", "THERMOS", "OLYMPUS", "Hoppetta", "japan import Puzzle",
+    # "ensky", "Sunstar", "Tenyo", "Tombo", "TC Electronic", "Chikamasa", "ConsoleTuner", "Ibanez", "BOSS", "XYZprinting",
+    # "Max Factory", "EVERNEW", "Tamron", "Electro-Harmonix", "ARTISAN", "TSUBOE", "Square enix"
 ]
 searchTimeLog = []
 for keyWord in keyWords:
@@ -51,7 +55,7 @@ for keyWord in keyWords:
     dt_now = datetime.datetime.now()
     startDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
     asins = productSearchPage.商品のASINを抜き取る('JA')
-    productSearchPage.fileを出力('/Users/ebata/Dropbox/sellBuy/outPutFile/JP/asinFor'+str(
+    productSearchPage.fileを出力('/Users/ken.ebata/Dropbox/sellBuy/outPutFile/JP/asinFor'+str(
         keyWord)+str(dt_now.strftime('%Y-%m-%d %H:%M'))+'.csv', asins)
 
     dt_now = datetime.datetime.now()

@@ -6,10 +6,14 @@ import datetime
 from pages import MyAmazonPage
 from pages import TwitterLoginPage
 import chromedriver_binary
+from webdriver_manager.chrome import ChromeDriverManager
 
-options = Options()
+# options = Options()
+# options.add_argument('--headless')
+options = webdriver.ChromeOptions()
 options.add_argument('--headless')
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+# driver = webdriver.Chrome(options=options)
 # driver = webdriver.Chrome()
 # twitterLoginPage = TwitterLoginPage(driver)
 # twitterLoginPage.open()

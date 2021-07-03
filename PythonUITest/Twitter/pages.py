@@ -53,9 +53,24 @@ class TwitterPage(BasePage):
             'https://twitter.com/premier_teru/following'
         )
 
-    def カンのフォローリスト(self):
+    def プレってるフォロワーリスト(self):
+        self.driver.get(
+            'https://twitter.com/premier_teru/followers'
+        )
+
+    def カンのフォロワーリスト(self):
         self.driver.get(
             'https://twitter.com/NoGucci110/followers'
+        )
+
+    def けんちゃんねるのフォロワーリスト(self):
+        self.driver.get(
+            'https://twitter.com/ken_channel_nel/followers'
+        )
+
+    def けんちゃんねるのフォローリスト(self):
+        self.driver.get(
+            'https://twitter.com/ken_channel_nel/followers'
         )
 
     def フォロワーリストを開く(self, twitterId):

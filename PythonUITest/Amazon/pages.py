@@ -117,6 +117,8 @@ class ProductSearchPage(BasePage):
                 ".next.copy-kat-button.secondary").click()
 
     def 商品のASINを抜き取る(self, land):
+        today = datetime.date.today()
+        path = '/Users/ken.ebata/work/rpa/PythonUITest/outPutFile/searchAsins'+str(today)+'.csv'
         # ASINのDOMを取得して、コンディションが含まれていない場合スキップ
         # 含まれていた場合は、出品制限が降りていることになるので、そのASINコードを取得する
         # ASINコードの取得の仕方は、まず「/db/」が入っていることを確認し入ってなかった場合はスキップ
@@ -166,8 +168,11 @@ class ProductSearchPage(BasePage):
                             print(aTag.get_attribute("href"))
                             aTagText = aTag.text.replace(',', '|')
                             aTagText = aTagText.replace('"', '')
+                            asinOne = aTag.get_attribute("href").split('/dp/')[1]
                             asins.append(
-                                aTagText+","+aTag.get_attribute("href").split('/dp/')[1])
+                                aTagText+","+asinOne)
+                            with open(path, mode='r+') as f:
+                                f.write(","+str(asinOne))
                     except:
                         print("atagなし")
 
@@ -262,6 +267,24 @@ class MyAmazonPage(BasePage):
         API_SECRET = 'iXedoTTXfwE0GekR1172VNnAOXmyUXbHJ1riPFdmkL1KSJCTKT'
         ACCESS_TOKEN = '2876575891-hEPoe4rxnJZcDRbQegiMpBLgEFXutkVjGnwC0dW'
         ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
+        
+        # bitlyURL短縮サービスアクセストークン
+        accessTokens = [
+            '5fc83f45d2c1872af10a5a2f55275f94f8b04ca2',
+            '405d983e1fe050a09f968c100dae759bd812bdc2',
+            'afde27fce5eb37239e25733ed653e9544cd568b3',
+            '2c1124e977a63e564cbd29ff563de3bf01767296',
+            'fd03fa9f33f45661eeb81b51b6cc6f21fb8e50bb',
+            '710dab5ea21bb0f07a1f2952b5674bda4e10c32d',
+            '6e0118e77bf98f7924704918bfecdc77397b0137',
+            '3d2f541a6a4b211c5d491071dd1bb70f082ec6c2',
+            '326473305084a4382d9f8d393fd94cdb7f981e89',
+            '53956277fe16358e02af166e309c7007028d6e36',
+            'ff01f1be4d93707d708e955ea07bf814a3087758',
+            'c37b5c181239aee45fcaea005c6c762139bc49fb',
+            '14c7ce4d141e314bff5c37fcfabc0f25ee47a3c9',
+            '28403cd715c99150c913fbc7a531455140dc6ab0'
+        ]
 
         # APIの認証
         auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
@@ -295,24 +318,29 @@ class MyAmazonPage(BasePage):
                 if asin["asin"] not in skips:
                     # 値段をとってきたい 画像をとってきたい
                     # 短縮するAmazonURL生成を入れる
-                    longUrl = "https://www.amazon"+domain+"/gp/product/"+asin["asin"]+"/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=premierteru-22&creative=1211&linkCode=as2&creativeASIN="+asin["asin"]
+                    longUrl = "https://www.amazon"+domain+"/gp/product/"+asin["asin"]+"/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=premierteru02-22&creative=1211&linkCode=as2&creativeASIN="+asin["asin"]
                     # longUrl = "https://www.amazon"+domain+"/dp/"+asin["asin"] + \
                     #     "/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22"+aod
 
                     # エンドポイント
                     apiUrl = 'https://api-ssl.bitly.com/v3/shorten'
-                    # アクセストークン
-                    access_token = '2c1124e977a63e564cbd29ff563de3bf01767296'
-                    query = {
-                        'access_token': access_token,
-                        'longurl': longUrl
-                    }
-                    createUrl = requests.get(apiUrl, params=query).json()[
-                        'data']['url']
-
+                    
+                    for token in accessTokens:
+                        try:
+                            query = {
+                                'access_token': token,
+                                'longurl': longUrl
+                            }
+                            createUrl = requests.get(apiUrl, params=query).json()['data']['url']
+                        except Exception as e:
+                            print(e)
+                            continue
+                    
+                    # 一時的に
                     wp = Client('https://premieritem.wordpress.com//xmlrpc.php',
                                 "syokkotan@gmail.com", "kenyuka128")
                     post = WordPressPost()
+
                     titleSplit = asin["title"]
                     splits = ['〃', '仝', 'ゝ', 'ゞ', '々', '〆', 'ヾ', '―', '‐', '／', '〇', 'ヽ', '＿', '￣', '¨', '｀', '´', '゜', '゛', '＼', '§', '＾', '≫', '￢', '⇒', '⇔', '∀', '∃', '∠', '⊥', '⌒', '∂', '∇', '≡', '∨', '≪', '†', '√', '∽', '∝', '∵', '∫', '∬', 'Å', '‰', '♯',
                               '♭', '♪', '‡', '～', '′', '≒', '×', '∥', '∧', '｜', '…', '±', '÷', '≠', '≦', '≧', '∞', '∴', '♂', '♀', '∪', '‥', '°', '⊃', '⊂', '⊇', '∩', '⊆', '∋', '∈', '〓', '〒', '※', '″', '☆', '★', ',', '.', ';', "'", '"', '?', '!', '(', ')', '（', '）', '/', '【', '】', '[', ']']
@@ -339,13 +367,18 @@ class MyAmazonPage(BasePage):
                     # 投稿内容を仕上げる
                     updatePost = title+hashtags
 
+                    # 一時的に
                     post.title = updatePost
-                    post.content = title+"\n商品リンク： "+createUrl
+                    post.content = title+"\n商品リンク： "+str(createUrl)
                     post.terms_names = {'category': categorys}
+
+
                     # 投稿URL
                     # post.slug = '自分のサイトのURL'
                     # サムネイルの指定
                     # post.thumbnail = ここに画像のIDを指定する
+
+                    # 一時的に
                     post.post_status = 'publish'
                     wp.call(NewPost(post))
                     dt_now = datetime.datetime.now()
@@ -412,7 +445,7 @@ class MyAmazonPage(BasePage):
                 if asin["asin"] not in skips:
                     # 値段をとってきたい 画像をとってきたい
                     # 短縮するAmazonURL生成を入れる
-                    longUrl = "https://www.amazon"+domain+"/gp/product/"+asin["asin"]+"/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=premierteru-22&creative=1211&linkCode=as2&creativeASIN="+asin["asin"]
+                    longUrl = "https://www.amazon"+domain+"/gp/product/"+asin["asin"]+"/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=premierteru02-22&creative=1211&linkCode=as2&creativeASIN="+asin["asin"]
                         # longUrl = "https://www.amazon"+domain+"/dp/"+asin["asin"] + \
                         # "/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1&linkCode=ure&creative=6339&tag=jalcojp-1583421-22"+aod
 
@@ -495,8 +528,23 @@ class AmazonTimeSalePage(BasePage):
         url = "https://www.amazon.co.jp/deal/7f92b4ad/ref=gbps_rlm_m-8_da49_7f92b4ad?showVariations=true&smid=AN1VRQENFRJN5&pf_rd_p=dc07c715-6714-4621-8dce-d8aeabd7da49&pf_rd_s=merchandised-search-8&pf_rd_t=101&pf_rd_i=5118913051&pf_rd_m=AN1VRQENFRJN5&pf_rd_r=ZVP07VP0HW76DXQBQR0S"
         super().__init__(driver=driver, url=url)
 
+    def ログイン(self, loginId, passWord):
+        # self.driver.find_element_by_link_text('ログイン').click()
+        # 検索語として「selenium」と入力し、Enterキーを押す。
+        search = self.driver.find_element_by_name('email')
+        search.send_keys(loginId)
+        search.send_keys(Keys.ENTER)
+        search = self.driver.find_element_by_name('password')
+        search.send_keys(passWord)
+        search.send_keys(Keys.ENTER)
+        sleep(40)
+        print("ログイン！！！")
+
     def 商品一覧からClassNamedでDOMをとる(self, className):
         return self.driver.find_elements_by_class_name(className)
+
+    def 商品一覧からtagNameでDOMをとる(self, tagName):
+        return self.driver.find_elements_by_tag_name(tagName)
 
     def 商品画面をURLで直接開く(self, url):
         self.driver.get(url)
@@ -522,3 +570,48 @@ class AmazonTimeSalePage(BasePage):
         with open(path, mode='a') as f:
             for text in mergeArr:
                 f.write(str(text)+"\n")
+
+    def 待機チェック(self):
+        onehour = 3600
+        today = datetime.datetime.now()
+        hour = today.hour
+        if (hour >= 7 and hour <= 9) or (hour >= 11 and hour <= 14) or (hour >= 17 and hour <= 23):
+            print("通勤/ランチ/帰宅中・帰宅後")
+        else:  
+            if hour == 24:
+                print("7時間待機")
+                sleep(onehour*7)
+            elif hour == 1:
+                print("6時間待機")
+                sleep(onehour*6)
+            elif hour == 2:
+                print("5時間待機")
+                sleep(onehour*5)
+            elif hour == 3:
+                print("4時間待機")
+                sleep(onehour*4)
+            elif hour == 4:
+                print("3時間待機")
+                sleep(onehour*3)
+            elif hour == 5 or hour == 15:
+                print("2時間待機")
+                sleep(onehour*2)
+            elif hour == 6 or hour == 10:
+                print("1時間待機")
+                sleep(onehour*1)
+
+    def 三百件投稿の場合三時間待機(self):
+        print("3時間以内に300件投稿を行いました")
+        print("3時間休憩入ります...")
+        sleep(1800)
+        print("30分経過休憩...")
+        sleep(1800)
+        print("60分経過休憩...")
+        sleep(1800)
+        print("90分経過休憩...")
+        sleep(1800)
+        print("120分経過休憩...")
+        sleep(1800)
+        print("150分経過休憩...")
+        sleep(1800)
+        print("3時間休憩終了！")

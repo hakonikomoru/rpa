@@ -18,11 +18,42 @@ API_SECRET = 'iXedoTTXfwE0GekR1172VNnAOXmyUXbHJ1riPFdmkL1KSJCTKT'
 ACCESS_TOKEN = '2876575891-hEPoe4rxnJZcDRbQegiMpBLgEFXutkVjGnwC0dW'
 ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
 
+
+
+onehour = 3600
+today = datetime.datetime.now()
+hour = today.hour
+if (hour >= 7 and hour <= 9) or (hour >= 11 and hour <= 14) or (hour >= 17 and hour <= 23):
+    print("通勤/ランチ/帰宅中・帰宅後")
+else:  # 夜10時から真夜中の2時
+    if hour == 24:
+        print("7時間待機")
+        sleep(onehour*7)
+    elif hour == 1:
+        print("6時間待機")
+        sleep(onehour*6)
+    elif hour == 2:
+        print("5時間待機")
+        sleep(onehour*5)
+    elif hour == 3:
+        print("4時間待機")
+        sleep(onehour*4)
+    elif hour == 4:
+        print("3時間待機")
+        sleep(onehour*3)
+    elif hour == 5 or hour == 15:
+        print("2時間待機")
+        sleep(onehour*2)
+    elif hour == 6 or hour == 10:
+        print("1時間待機")
+        sleep(onehour*1)
+exit()
+
 # APIの認証
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 # Twitterオブジェクトの生成
-# api = tweepy.API(auth)
+api = tweepy.API(auth)
 
 # ツイートを投稿
 # try:
@@ -39,9 +70,13 @@ auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
 
 # キーワードからツイートを取得
-# api = tweepy.API(auth)
 # tweets = api.search(q=['Python'], count=10)
-
+# フォロワーを見たい人
+screenName = 'NoGucci110'
+followers = api.followers(screenName)
+for follower in followers:
+    print(follower.screen_name)
+sleep(1000)
 # for tweet in tweets:
 #     print('-----------------')
 #     print(tweet.text)
