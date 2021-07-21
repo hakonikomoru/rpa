@@ -56,12 +56,16 @@ driver = webdriver.Chrome(ChromeDriverManager().install())
 amazonPage = AmazonTimeSalePage(driver)
 amazonPage.open()
 
+#Twitterトレンドを見てハッシュタグを調整しよう
 amazonPage.商品画面をURLで直接開く(
-    'https://www.amazon.co.jp/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.co.jp%2Fprimeday%3Fref_%3Dnav_custrec_signin%26_encoding%3DUTF8&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=jpflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&')
+    'https://www.amazon.co.jp/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.co.jp%2Fprimeday%3Fref_%3Dnav_custrec_signin%26_encoding%3DUTF8&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=jpflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&'
+)
 amazonPage.ログイン('k.ebata.mail@gmail.com', 'hnhn8787')
 
 amazonPage.商品画面をURLで直接開く(
-    'https://www.amazon.co.jp/gp/goldbox?ref_=nav_cs_gb_4421680a68ae4ba2a5c97c993c26b5a6')
+    'https://www.amazon.co.jp/b/ref=gwd_hero?node=4160355051&pf_rd_r=NC6R46MSH08EDKK6VWJT&pf_rd_p=c11b0870-7e30-4bc2-9467-2c8402e138b6'
+#     'https://www.amazon.co.jp/gp/goldbox?ref_=nav_cs_gb_4421680a68ae4ba2a5c97c993c26b5a6'
+)
 
 sleep(5)
 urls = []
@@ -83,8 +87,8 @@ if not oldAsins:
 
 # for num in range(5):
 rangeCount = 200
-rangeCount = 160
-rangeCount = 20
+rangeCount = 834
+# rangeCount = 20
 skipTitles = [
     "スニーカー",
     "シューズ",
@@ -105,7 +109,32 @@ skipTitles = [
     "サンダル",
     "リュック",
     "ブラジャー",
-    "弁当"
+    "バッグ",
+    "弁当",
+    "食品",
+    "中華そば",
+    "ラーメン",
+    "布団",
+    "ラジコン",
+    "ドローン",
+    "パペット",
+    "ベッド",
+    "スマホケース",
+    "時計"
+]
+stockTitles = [
+    # ガジェット系
+    "Razer", "レイザー", "Logicool", "ロジクール", "logitech", "ELECOM", "エレコム",
+    "ゲーミング", "パソコン", "キャプチャーボード", "ゼンハイザー", "モニター", "デスクトップ",
+    "PC", "switch", "ゲーム", "Amazon", "アマゾン", "sony", "ソニー", "Apple",
+    # キャンプ系
+    "アウトドア", "キャンプ", "ビール", "バーベキュー", "BBQ", "テント",
+    # 夏
+    "水着", "浮き輪", "夏", "プロテイン",
+    # 家電
+    "掃除機",
+    # 日用品
+    "マスク"
 ]
 notTitleCount = 0
 selectorGetMissCount = 0
@@ -305,7 +334,7 @@ for url in urls:
 
         title = asin["title"]
         # ハッシュタグを入れたい場合は入れる↓
-        categorys = ["Amazon", "タイムセール", "プレってる"]
+        categorys = ["Amazon", "タイムセール", "Amazonタイムセール祭り"]
         hashtags = "\n#"+' #'.join(categorys)
         minusCount = len(hashtags)
 
@@ -355,14 +384,16 @@ for url in urls:
         print("投稿時間： "+postDateTime)
         print("商品名： "+asin["title"])
         print("ASIN： "+asin["asin"])
-        # ファイルへ一度投稿したASINを追記しておく
-        with open(path, mode='a') as f:
-            f.write(","+str(asin["asin"]))
+        # 売れ筋商品はASINを記録しない
+        if asin["title"] not in stockTitles:
+            # ファイルへ一度投稿したASINを追記しておく
+            with open(path, mode='a') as f:
+                f.write(","+str(asin["asin"]))
 
-        # 重複チェック用ファイルを閲覧して重複をなくして再度skipAsinsに格納
-        with open(path) as f:
-            oldAsins = f.read()
-            skipAsins = list(set(oldAsins.split(',')))
+            # 重複チェック用ファイルを閲覧して重複をなくして再度skipAsinsに格納
+            with open(path) as f:
+                oldAsins = f.read()
+                skipAsins = list(set(oldAsins.split(',')))
 
     # amazonPage.商品画面をURLで直接開く('https://www.amazon.co.jp/dp/'+asin)
     # amazonPage.Twitterボタンを押下()

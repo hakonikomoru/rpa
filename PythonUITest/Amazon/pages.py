@@ -260,6 +260,58 @@ class MyAmazonPage(BasePage):
         handleArray = self.driver.window_handles
         self.driver.close()
         self.driver.switch_to.window(handleArray[0])
+    
+    def 待機チェック(self):
+        onehour = 3600
+        today = datetime.datetime.now()
+        hour = today.hour
+        if (hour >= 7 and hour <= 9) or (hour >= 11 and hour <= 14) or (hour >= 17 and hour <= 23):
+            print("通勤/ランチ/帰宅中・帰宅後")
+        else:  
+            if hour == 0:
+                print("今"+str(hour)+"時")
+                print("7時間後投稿開始")
+                sleep(onehour*7)
+            elif hour == 1:
+                print("今"+str(hour)+"時")
+                print("6時間後投稿開始")
+                sleep(onehour*6)
+            elif hour == 2:
+                print("今"+str(hour)+"時")
+                print("5時間後投稿開始")
+                sleep(onehour*5)
+            elif hour == 3:
+                print("今"+str(hour)+"時")
+                print("4時間後投稿開始")
+                sleep(onehour*4)
+            elif hour == 4:
+                print("今"+str(hour)+"時")
+                print("3時間後投稿開始")
+                sleep(onehour*3)
+            elif hour == 5 or hour == 15:
+                print("今"+str(hour)+"時")
+                print("2時間後投稿開始")
+                sleep(onehour*2)
+            elif hour == 6 or hour == 10:
+                print("今"+str(hour)+"時")
+                print("1時間後投稿開始")
+                sleep(onehour*1)
+
+    def 三百件投稿の場合三時間待機(self):
+        print("3時間以内に300件投稿を行いました")
+        print("3時間休憩入ります...")
+        sleep(1800)
+        print("30分経過休憩...")
+        sleep(1800)
+        print("60分経過休憩...")
+        sleep(1800)
+        print("90分経過休憩...")
+        sleep(1800)
+        print("120分経過休憩...")
+        sleep(1800)
+        print("150分経過休憩...")
+        sleep(1800)
+        print("3時間休憩終了！")
 
     def 対象縦長ページの商品を投稿する(self, url, domain, aod):
         # 認証に必要なキーとトークン
@@ -355,7 +407,8 @@ class MyAmazonPage(BasePage):
 
                     title = asin["title"]
                     # ハッシュタグを入れたい場合は入れる↓
-                    categorys = ["プレってる","Amazon","おすすめ品"]
+                    # categorys = ["プレってる", "Amazon", "Amazonタイムセール祭り"]
+                    categorys = ["プレってる", "Amazon", "おすすめ品"]
                     # "Amazonセール", "セール", "セール商品",
                     # "新生活", "新生活セール", "新生活応援", 
                     hashtags = "\n#"+' #'.join(categorys)
@@ -379,25 +432,13 @@ class MyAmazonPage(BasePage):
                     # post.thumbnail = ここに画像のIDを指定する
 
                     # 一時的に
+                    self.待機チェック()
                     post.post_status = 'publish'
                     wp.call(NewPost(post))
                     dt_now = datetime.datetime.now()
 
                     if postCount > 0 and postCount % 300 == 0:
-                        print("3時間以内に300件投稿を行いました")
-                        print("3時間休憩入ります...")
-                        sleep(1800)
-                        print("30分経過休憩...")
-                        sleep(1800)
-                        print("60分経過休憩...")
-                        sleep(1800)
-                        print("90分経過休憩...")
-                        sleep(1800)
-                        print("120分経過休憩...")
-                        sleep(1800)
-                        print("150分経過休憩...")
-                        sleep(1800)
-                        print("3時間休憩終了！")
+                        self.三百件投稿の場合三時間待機()
                     try:
                         # ツイートを投稿
                         api.update_status(str(updatePost)+"\n"+str(createUrl))
@@ -405,20 +446,7 @@ class MyAmazonPage(BasePage):
                     except Exception as e:
                         print(e)
                         if "User is over daily status update limit" in str(e):
-                            print("3時間以内に300件投稿を行いました")
-                            print("3時間休憩入ります...")
-                            sleep(1800)
-                            print("30分経過休憩...")
-                            sleep(1800)
-                            print("60分経過休憩...")
-                            sleep(1800)
-                            print("90分経過休憩...")
-                            sleep(1800)
-                            print("120分経過休憩...")
-                            sleep(1800)
-                            print("150分経過休憩...")
-                            sleep(1800)
-                            print("3時間休憩終了！")
+                            self.三百件投稿の場合三時間待機()
                             postCount = 0
                         elif "duplicate" in str(e):
                             print("重複した投稿内容です")
@@ -578,26 +606,33 @@ class AmazonTimeSalePage(BasePage):
         if (hour >= 7 and hour <= 9) or (hour >= 11 and hour <= 14) or (hour >= 17 and hour <= 23):
             print("通勤/ランチ/帰宅中・帰宅後")
         else:  
-            if hour == 24:
-                print("7時間待機")
+            if hour == 0:
+                print("今"+str(hour)+"時")
+                print("7時間後")
                 sleep(onehour*7)
             elif hour == 1:
-                print("6時間待機")
+                print("今"+str(hour)+"時")
+                print("6時間後投稿開始")
                 sleep(onehour*6)
             elif hour == 2:
-                print("5時間待機")
+                print("今"+str(hour)+"時")
+                print("5時間後投稿開始")
                 sleep(onehour*5)
             elif hour == 3:
-                print("4時間待機")
+                print("今"+str(hour)+"時")
+                print("4時間後投稿開始")
                 sleep(onehour*4)
             elif hour == 4:
-                print("3時間待機")
+                print("今"+str(hour)+"時")
+                print("3時間後投稿開始")
                 sleep(onehour*3)
             elif hour == 5 or hour == 15:
-                print("2時間待機")
+                print("今"+str(hour)+"時")
+                print("2時間後投稿開始")
                 sleep(onehour*2)
             elif hour == 6 or hour == 10:
-                print("1時間待機")
+                print("今"+str(hour)+"時")
+                print("1時間後投稿開始")
                 sleep(onehour*1)
 
     def 三百件投稿の場合三時間待機(self):
