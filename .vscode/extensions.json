@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        // 拡張機能のIDのリスト
+        "ms-python.vscode-pylance",
+    ],
+    "unwantedRecommendations": [
+        // 除外する拡張機能のIDのリスト（オプショナル）
+    ]
+}

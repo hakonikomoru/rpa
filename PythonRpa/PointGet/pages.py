@@ -2,10 +2,9 @@
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from BasePage import BasePage
-import chromedriver_binary
 import datetime
 
-# ログイン画面操作
+# login画面操作
 
 
 class RakutenENaviLoginPage(BasePage):
@@ -14,7 +13,7 @@ class RakutenENaviLoginPage(BasePage):
         url = "https://www.rakuten-card.co.jp/e-navi/members/point/click-point/index.xhtml?l-id=enavi_mtop_pointservice_click"
         super().__init__(driver=driver, url=url)
 
-    def ログイン(self, loginId, passWord):
+    def login(self, loginId, passWord):
         # 検索語として「selenium」と入力し、Enterキーを押す。
         search = self.driver.find_element_by_name('u')
         search.send_keys(loginId)

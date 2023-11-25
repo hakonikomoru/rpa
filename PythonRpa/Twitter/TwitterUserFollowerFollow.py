@@ -5,7 +5,6 @@ from time import sleep
 import datetime
 from pages import TwitterLoginPage
 from pages import TwitterPage
-import chromedriver_binary
 import tweepy
 
 # 認証に必要なキーとトークン
@@ -40,7 +39,7 @@ for n in range(23):
         if limit == 5:
             limit = 0
             dt_now = datetime.datetime.now()
-            print("30分休憩："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
+            print("30分休憩🍵："+str(dt_now.strftime('%Y-%m-%d %H:%M:%S')))
             sleep(1800)
         
         try:
@@ -60,9 +59,9 @@ for n in range(23):
             # [{'code': 161, 'message': "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>."}]
             # [{'code': 326, 'message': 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'}]
             if "You are unable to follow more people at this time. Learn more" in str(e):
-                print("怒られたので1時間休憩します。")
+                print("怒られたので1時間休憩🍵します。")
                 sleep(3600)
-                # print("怒られたので10分間休憩します。")
+                # print("怒られたので10分間休憩🍵します。")
                 # sleep(600)
                 continue
 
@@ -87,7 +86,7 @@ for n in range(23):
     # for follower in followers:
     #     if limit == 5:
     #         limit = 0
-    #         print("30分休憩します。")
+    #         print("30分休憩🍵します。")
     #         sleep(1800)
                 
     #     try:
@@ -106,9 +105,9 @@ for n in range(23):
     #         # [{'code': 161, 'message': "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>."}]
     #         # [{'code': 326, 'message': 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'}]
     #         if "You are unable to follow more people at this time. Learn more" in str(e):
-    #             print("怒られたので1時間休憩します。")
+    #             print("怒られたので1時間休憩🍵します。")
     #             sleep(3600)
-    #             # print("怒られたので10分間休憩します。")
+    #             # print("怒られたので10分間休憩🍵します。")
     #             # sleep(600)
     #             continue
 

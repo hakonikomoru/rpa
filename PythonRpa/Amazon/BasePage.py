@@ -1,12 +1,12 @@
-# -*- coding: utf-8 -*-
-
-from selenium.webdriver.common.keys import Keys
 from collections import OrderedDict
-import chromedriver_binary
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+import pyshorteners
 
 
 class BasePage:
-
+    
     def __init__(self, driver=None, url=None):
         self.driver = driver
         self.url = url
@@ -17,11 +17,44 @@ class BasePage:
     def close(self):
         self.driver.quit()
 
-    def fileを出力(self, path, outPutArr):
-        # pathのファイルへ書き込む
-        with open(path, mode='w') as f:
-            for text in outPutArr:
-                f.write(str(text)+"\n")
+    @staticmethod
+    def write_to_file(path, output_arr, mode='w'):
+        with open(path, mode=mode) as f:
+            for text in output_arr:
+                f.write(str(text) + "\n")
 
-    def 配列内の重複を無くして配列を返す(self, arr):
-        return list(set(arr))
+    @staticmethod
+    def deduplicate_array(arr):
+        return list(OrderedDict.fromkeys(arr))
+
+    def append_to_file(self, path, merge_arr):
+        self.write_to_file(path, merge_arr, mode='a')
+
+    def shorten_url(longUrl):
+        s = pyshorteners.Shortener()
+    
+        # リトライロジックを実装する
+        session = requests.Session()
+        retry_strategy = Retry(
+            total=3,  # リトライ回数を3回に設定
+            backoff_factor=1,  # リトライ間隔の係数
+            status_forcelist=[429, 500, 502, 503, 504],  # リトライするステータスコードを指定
+            method_whitelist=["HEAD", "GET", "OPTIONS", "POST", "PUT"]
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
+
+        # タイムアウト値を増やす
+        timeout = 10  # タイムアウトを10秒に設定
+
+        try:
+            response = session.get(
+                s.tinyurl.api_url,
+                params=dict(url=longUrl),
+                timeout=timeout
+            )
+            return response.text.strip()
+        except requests.exceptions.RequestException as e:
+            print(f"エラーが発生しました: {e}")
+            return None

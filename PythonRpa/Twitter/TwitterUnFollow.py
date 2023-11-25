@@ -4,7 +4,6 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 from pages import TwitterLoginPage
 from pages import TwitterPage
-import chromedriver_binary
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -16,9 +15,9 @@ driver = webdriver.Chrome(ChromeDriverManager().install())
 twitterLoginPage = TwitterLoginPage(driver)
 twitterPage = TwitterPage(driver)
 twitterLoginPage.open()
-# twitterLoginPage.Twitterログイン("premier_teru", "hnhn8787")
-twitterLoginPage.Twitterログイン("ken_channel_nel", "hnhn8787")
-# twitterLoginPage.Twitterログイン("premier_teru", "kenyuka128")
+# twitterLoginPage.Twitterlogin("premier_teru", "hnhn8787")
+twitterLoginPage.Twitterlogin("ken_channel_nel", "hnhn8787")
+# twitterLoginPage.Twitterlogin("premier_teru", "kenyuka128")
 driver.get(
     'https://twitter.com/ken_channel_nel/following'
 )

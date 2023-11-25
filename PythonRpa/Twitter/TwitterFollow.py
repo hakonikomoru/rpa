@@ -5,14 +5,20 @@ from time import sleep
 import datetime
 from pages import TwitterLoginPage
 from pages import TwitterPage
-import chromedriver_binary
 import tweepy
 
 # 認証に必要なキーとトークン
-API_KEY = 'tDTjqtriaaN36rqgWiM03dfAP'
-API_SECRET = 'iXedoTTXfwE0GekR1172VNnAOXmyUXbHJ1riPFdmkL1KSJCTKT'
-ACCESS_TOKEN = '2876575891-hEPoe4rxnJZcDRbQegiMpBLgEFXutkVjGnwC0dW'
-ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
+# けんちゃんねる
+# API_KEY = 'tDTjqtriaaN36rqgWiM03dfAP'
+# API_SECRET = 'iXedoTTXfwE0GekR1172VNnAOXmyUXbHJ1riPFdmkL1KSJCTKT'
+# ACCESS_TOKEN = '2876575891-hEPoe4rxnJZcDRbQegiMpBLgEFXutkVjGnwC0dW'
+# ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
+
+# 箱荷こもる
+API_KEY = 'P8vd7jq8Xd8wKUc7jht2nORtG'
+API_SECRET = 'IEQlj94a3WXZLct2rnUrefDogeXAhhVNpYADQfXGnPLZhjYoGd'
+ACCESS_TOKEN = '1553783508736573440-ARKfpmfRa02254j0GNc8DLcF0hwtzG'
+ACCESS_TOKEN_SECRET = 'MomINNi5IRHCl4zznNA8cAL6RTFWED78i9bDIqMRW9tV0'
 
 # APIの認証
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
@@ -44,7 +50,7 @@ for n in range(23):
         #     break
         if limit == 5:
             limit = 0
-            print("30分休憩します。")
+            print("30分休憩🍵します。")
             sleep(1800)
             
         screen_name = result.user._json['screen_name']
@@ -66,9 +72,9 @@ for n in range(23):
             # [{'code': 161, 'message': "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>."}]
             # [{'code': 326, 'message': 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'}]
             if "You are unable to follow more people at this time. Learn more" in str(e):
-                print("怒られたので1時間休憩します。")
+                print("怒られたので1時間休憩🍵します。")
                 sleep(3600)
-                # print("怒られたので10分間休憩します。")
+                # print("怒られたので10分間休憩🍵します。")
                 # sleep(600)
                 continue
 
@@ -89,7 +95,7 @@ for n in range(23):
     # twitterLoginPage.open()
     # sleep(3)
     # targets = ['相互フォロー']
-    # twitterLoginPage.Twitterログイン("ken_channel_nel", "hnhn8787")
+    # twitterLoginPage.Twitterlogin("ken_channel_nel", "hnhn8787")
     # twitterPage.プレってるフォローリスト()
     # twitterPage.表示されたユーザーリストをフォローする()
     # dt_now = datetime.datetime.now()
@@ -98,4 +104,4 @@ for n in range(23):
 
     # id = input("TwitterIDを入力してください：")
     # pw = input("TwitterPWを入力してください：")
-    # twitterLoginPage.Twitterログイン(id, pw)
+    # twitterLoginPage.Twitterlogin(id, pw)

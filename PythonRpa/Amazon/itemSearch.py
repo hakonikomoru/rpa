@@ -4,7 +4,6 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 from pages import AmazonPage
 from pages import ProductSearchPage
-import chromedriver_binary
 
 # options = Options()
 # options.add_argument('--headless')
@@ -12,9 +11,9 @@ import chromedriver_binary
 driver = webdriver.Chrome()
 amazonPage = AmazonPage(driver)
 amazonPage.open()
-# amazonPage.商品検索("BANDAI")
-outPutArr = amazonPage.DOMを回してタグを解析して抽出リストを返す(
-    amazonPage.商品ページからClassNamedでDOMをとる('sg-col-inner'))
-amazonPage.fileを出力(
+# amazonPage.search_product("BANDAI")
+outPutArr = amazonPage.parse_tags_and_return_extracted_list(
+    amazonPage.get_class_named_elements_from_product_page('sg-col-inner'))
+amazonPage.write_output_to_file(
     '/Users/ebata/UITest/PythonRpa/outPutFile/test.csv', outPutArr)
 # amazonPage.close()

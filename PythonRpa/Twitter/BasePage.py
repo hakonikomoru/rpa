@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-
-from selenium.webdriver.common.keys import Keys
 from collections import OrderedDict
-import chromedriver_binary
 
 
 class BasePage:
-
+    
     def __init__(self, driver=None, url=None):
         self.driver = driver
         self.url = url
@@ -17,12 +13,15 @@ class BasePage:
     def close(self):
         self.driver.quit()
 
-    def fileを出力(self, path, outPutArr):
-        # pathのファイルへ書き込む
-        with open(path, mode='w') as f:
-            for text in outPutArr:
-                f.write(str(text)+"\n")
+    @staticmethod
+    def write_to_file(path, output_arr, mode='w'):
+        with open(path, mode=mode) as f:
+            for text in output_arr:
+                f.write(str(text) + "\n")
 
-    def 配列内の重複を無くして配列を返す(self,arr):
-        return list(set(arr))
-        
+    @staticmethod
+    def deduplicate_array(arr):
+        return list(OrderedDict.fromkeys(arr))
+
+    def append_to_file(self, path, merge_arr):
+        self.write_to_file(path, merge_arr, mode='a')

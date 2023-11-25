@@ -4,7 +4,6 @@ from selenium.webdriver.common.keys import Keys
 from time import sleep
 from selenium.webdriver.support.ui import Select
 from MercariLogin import MercariLogin
-import chromedriver_binary
 
 
 class MercariPriceUpChange:

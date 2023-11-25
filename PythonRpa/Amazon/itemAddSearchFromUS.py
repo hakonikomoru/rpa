@@ -4,7 +4,6 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 from pages import USSCLoginPage
 from pages import ProductSearchPage
-import chromedriver_binary
 import datetime
 
 # options = Options()
@@ -14,7 +13,7 @@ driver = webdriver.Chrome()
 loginPage = USSCLoginPage(driver, 'US')
 loginPage.open()
 
-loginPage.ログイン('ekconnect.amazoncom.seller@gmail.com', 'hnhn8787')
+loginPage.login('ekconnect.amazoncom.seller@gmail.com', 'hnhn8787')
 productSearchPage = ProductSearchPage(loginPage.driver)
 # "TSUBOE","","","","","","","","","","",""
 keyWords = [
@@ -46,13 +45,13 @@ keyWords = [
 ]
 searchTimeLog = []
 for keyWord in keyWords:
-    productSearchPage.商品登録画面をURLで直接開く('US')
-    productSearchPage.検索キーワードを入力して検索する(keyWord)
+    productSearchPage.open_product_registration_page_by_url('US')
+    productSearchPage.search_with_keyword(keyWord)
     dt_now = datetime.datetime.now()
     startDateTime = str(dt_now.strftime('%Y-%m-%d %H:%M:%S'))
-    asins = productSearchPage.商品のASINを抜き取る('US')
+    asins = productSearchPage.extract_asin_from_product('US')
     # /Users/ken.ebata/Dropbox/sellBuy/outPutFile/US
-    productSearchPage.fileを出力('/Users/ken.ebata/Dropbox/sellBuy/outPutFile/US/asinFor'+str(
+    productSearchPage.write_output_to_file('/Users/ken.ebata/Dropbox/sellBuy/outPutFile/US/asinFor'+str(
         keyWord)+str(dt_now.strftime('%Y-%m-%d %H:%M'))+'.csv', asins)
 
     dt_now = datetime.datetime.now()
@@ -63,7 +62,7 @@ for keyWord in keyWords:
 print(searchTimeLog)
 
 # productSearchPage.close()
-# myAuctionPage.評価ボタンを押下()
+# myAuctionPage.evaluate_button_press()
 
 # アップツールも自動化視野
 # https://apptool.jp/mypage

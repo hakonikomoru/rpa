@@ -4,7 +4,6 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 from pages import RakutenENaviLoginPage
 from pages import ClickDePointPage
-import chromedriver_binary
 
 # 落札された商品のすべての取引評価を行う
 
@@ -14,7 +13,7 @@ import chromedriver_binary
 driver = webdriver.Chrome()
 rakutenENaviLoginPage = RakutenENaviLoginPage(driver)
 rakutenENaviLoginPage.open()
-rakutenENaviLoginPage.ログイン('syokkotan', 'hnhn8787')
+rakutenENaviLoginPage.login('syokkotan', 'hnhn8787')
 clickDePointPage = ClickDePointPage(rakutenENaviLoginPage.driver)
 clickDePointPage.aタグをすべてクリック()
 
