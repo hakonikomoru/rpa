@@ -1,5 +1,6 @@
 # coding:utf-8
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from selenium.webdriver.support.ui import Select
@@ -23,7 +24,7 @@ class MercariPriceUpChange:
 
         pageItemMaxCount = 50
         chrome.get("https://www.mercari.com/jp/mypage/listings/listing/")
-        itemAtagLists = chrome.find_elements_by_class_name("mypage-item-link")
+        itemAtagLists = chrome.find_elements(By.CLASS_NAME, "mypage-item-link")
 
         xpath = "/html/body/div[@class='single-container']/main[@class='single-main']/section[@class='l-single-container buy-item-container']/div[@id='sell-container']/div/div[@class='sell-container-inner']/form[@class='sell-form'][2]/div[@class='sell-content sell-btn-box']/button[@class='btn-default btn-red']"
         throughCount = 0
@@ -34,7 +35,7 @@ class MercariPriceUpChange:
             chrome.switch_to.window(handleArray[1])
             chrome.get(url)
             chrome.find_element_by_link_text("商品の編集").click()
-            inputDefault = chrome.find_elements_by_class_name("input-default")
+            inputDefault = chrome.find_elements(By.CLASS_NAME, "input-default")
             sleep(1.5)
             itemName = inputDefault[0].get_attribute("value")
             inputPrice = inputDefault[1]
@@ -65,7 +66,7 @@ class MercariPriceUpChange:
 
         pageItemMaxCount = 50
         chrome.get("https://www.mercari.com/jp/mypage/listings/listing/")
-        itemAtagLists = chrome.find_elements_by_class_name("mypage-item-link")
+        itemAtagLists = chrome.find_elements(By.CLASS_NAME, "mypage-item-link")
 
         xpath = "/html/body/div[@class='single-container']/main[@class='single-main']/section[@class='l-single-container buy-item-container']/div[@id='sell-container']/div/div[@class='sell-container-inner']/form[@class='sell-form'][2]/div[@class='sell-content sell-btn-box']/button[@class='btn-default btn-red']"
         throughCount = 0
@@ -76,7 +77,7 @@ class MercariPriceUpChange:
             chrome.switch_to.window(handleArray[1])
             chrome.get(url)
             chrome.find_element_by_link_text("商品の編集").click()
-            inputDefault = chrome.find_elements_by_class_name("input-default")
+            inputDefault = chrome.find_elements(By.CLASS_NAME, "input-default")
             sleep(1.5)
             itemName = inputDefault[0].get_attribute("value")
             inputPrice = inputDefault[1]
@@ -104,20 +105,3 @@ class MercariPriceUpChange:
 
 # 起動
 MercariPriceUpChange().execute()
-
-# find_element_by_id
-# find_element_by_name
-# find_element_by_xpath
-# find_element_by_link_text
-# find_element_by_partial_link_text
-# find_element_by_tag_name
-# find_element_by_class_name
-# find_element_by_css_selector
-
-# find_elements_by_name
-# find_elements_by_xpath
-# find_elements_by_link_text
-# find_elements_by_partial_link_text
-# find_elements_by_tag_name
-# find_elements_by_class_name
-# find_elements_by_css_selector

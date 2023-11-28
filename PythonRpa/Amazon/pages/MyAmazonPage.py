@@ -1,24 +1,25 @@
 # coding:utf-8
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from time import sleep
 from BasePage import BasePage
 import datetime
-from wordpress_xmlrpc.methods.posts import GetPosts, NewPost
-from wordpress_xmlrpc import Client, WordPressPost
 import tweepy
 import config
 
 class MyAmazonPage(BasePage):
 
     def __init__(self, driver):
-        # 認証に必要なキーとトークン
-        API_KEY = 'tDTjqtriaaN36rqgWiM03dfAP'
-        API_SECRET = 'iXedoTTXfwE0GekR1172VNnAOXmyUXbHJ1riPFdmkL1KSJCTKT'
-        ACCESS_TOKEN = '2876575891-hEPoe4rxnJZcDRbQegiMpBLgEFXutkVjGnwC0dW'
-        ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
+        self.client = tweepy.Client(bearer_token=config.BEARER_TOKEN,
+            consumer_key=config.API_KEY,
+            consumer_secret=config.API_SECRET,
+            access_token=config.ACCESS_TOKEN,
+            access_token_secret=config.ACCESS_TOKEN_SECRET
+        )
         # APIの認証
-        auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
-        auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+        auth = tweepy.OAuthHandler(config.API_KEY, config.API_SECRET)
+        auth.set_access_token(config.ACCESS_TOKEN, config.ACCESS_TOKEN_SECRET)
         self.api = tweepy.API(auth)
         url = "https://www.amazon.co.jp/s?me=AO3JD7ELZ9RTY&marketplaceID=A1VC38T7YXB528"
         self.domain = '.co.jp'
@@ -27,16 +28,16 @@ class MyAmazonPage(BasePage):
         super().__init__(driver=driver, url=url)
 
     def get_class_named_elements_from_product_list(self, className):
-        return self.driver.find_elements_by_class_name(className)
+        return self.driver.find_elements(By.CLASS_NAME, className)
 
     def get_class_named_elements_from_product_listセレクター版(self, className):
-        return self.driver.find_elements_by_css_selector(className)
+        return self.driver.find_element(By.CSS_SELECTOR, className)
 
     def open_product_page_directly_by_url(self, url):
         self.driver.get(url)
 
     def click_twitter_button(self):
-        aTags = self.driver.find_elements_by_tag_name("a")
+        aTags = self.driver.find_elements(By.TAG_NAME, "a")
         for aTag in aTags:
             try:
                 if "Twitterでシェアする" in aTag.get_attribute("title"):
@@ -49,7 +50,7 @@ class MyAmazonPage(BasePage):
         # タブを見るカーソルが変わっていないため、一度タブを切り替える
         self.driver.switch_to.window(self.driver.window_handles[0])
         self.driver.switch_to.window(self.driver.window_handles[1])
-        spanTags = self.driver.find_elements_by_tag_name("span")
+        spanTags = self.driver.find_elements(By.TAG_NAME, "span")
 
         for spanTag in spanTags:
             try:
@@ -218,7 +219,8 @@ class MyAmazonPage(BasePage):
                 self.wait_for_three_hrs_for_300_posts()
             
             try:
-                self.api.update_status(tweet_content)
+                # self.api.update_status(tweet_content)
+                self.client.create_tweet(text=tweet_content)
                 print("ーーーーーーーーーーーーーーー")
                 print(asin["title"])
                 print(asin["asin"])
@@ -229,7 +231,7 @@ class MyAmazonPage(BasePage):
                 print("ーーーーーーーーーーーーーーー")
 
             except Exception as e:
-                print(e)
+                print(f"ツイートに失敗しました: {e}")
                 print("ーーーーーーーーーーーーーーー")
 
     def tweet_company_sales_items(self, url):
@@ -241,24 +243,32 @@ class MyAmazonPage(BasePage):
             for itemsTag in itemsTags:
                 try:
                     if "/dp/" in itemsTag.get_attribute("href"):
-                        title = itemsTag.find_element_by_tag_name("img").get_attribute("alt")
+                        title = itemsTag.find_element(By.TAG_NAME, "img").get_attribute("alt")
                         print(str(itemsTag.get_attribute(
                                     "href").split('/dp/')[1].split('/')[0]))
                         
                         print(title)
+                        print(itemsTag.find_element(By.TAG_NAME, "img").get_attribute("src"))
                         print("ーーーーーーーーーーーーーーー")
                         asins.append(
                             {
                                 "asin": str(itemsTag.get_attribute(
                                     "href").split('/dp/')[1].split('/')[0]),
                                 "title": title,
-                                "imageUrl": itemsTag.find_element_by_tag_name(
-                                    "img").get_attribute("src")
+                                "imageUrl": itemsTag.find_element(By.TAG_NAME, "img").
+                                    get_attribute("src")
                             }
                         )
-                except:
-                    continue
+                except NoSuchElementException as e:
+                    print("要素が見つからないエラーが発生しました:", e)
+                except TimeoutException as e:
+                    print("タイムアウトエラーが発生しました:", e)
+                except Exception as e:
+                    print("予期せぬエラーが発生しました:", e)
+                    # ここでスタックトレースをログに記録することもできます
+                finally:
+                    self.goldenTimeComment = ''
+                    for asin in asins:
+                        self.post_tweet(asin)
+                    pass
             
-            self.goldenTimeComment = ''
-            for asin in asins:
-                self.post_tweet(asin)

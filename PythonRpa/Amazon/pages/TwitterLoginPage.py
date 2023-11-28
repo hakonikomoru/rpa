@@ -11,8 +11,8 @@ class TwitterLoginPage(BasePage):
 
     def Twitterlogin(self):
         sleep(5)
-        search = self.driver.find_element_by_name("session[username_or_email]")
+        search = self.driver.find_element(By.NAME, "session[username_or_email]")
         search.send_keys("premier_teru")
-        search = self.driver.find_element_by_name("session[password]")
+        search = self.driver.find_element(By.NAME, "session[password]")
         search.send_keys("hnhn8787")
         search.send_keys(Keys.ENTER)

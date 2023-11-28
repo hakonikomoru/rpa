@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from BasePage import BasePage
 from time import sleep
@@ -8,36 +9,38 @@ import config
 class AmazonTimeSalePage(BasePage):
 
     def __init__(self, driver):
-        url = "https://www.amazon.co.jp/deal/7f92b4ad/ref=gbps_rlm_m-8_da49_7f92b4ad?showVariations=true&smid=AN1VRQENFRJN5&pf_rd_p=dc07c715-6714-4621-8dce-d8aeabd7da49&pf_rd_s=merchandised-search-8&pf_rd_t=101&pf_rd_i=5118913051&pf_rd_m=AN1VRQENFRJN5&pf_rd_r=ZVP07VP0HW76DXQBQR0S"
+        # url = "https://www.amazon.co.jp/deal/7f92b4ad/ref=gbps_rlm_m-8_da49_7f92b4ad?showVariations=true&smid=AN1VRQENFRJN5&pf_rd_p=dc07c715-6714-4621-8dce-d8aeabd7da49&pf_rd_s=merchandised-search-8&pf_rd_t=101&pf_rd_i=5118913051&pf_rd_m=AN1VRQENFRJN5&pf_rd_r=ZVP07VP0HW76DXQBQR0S"
+        url = "https://www.amazon.co.jp/blackfriday"
         super().__init__(driver=driver, url=url)
 
     def login(self, loginId, passWord):
-        search = self.driver.find_element_by_name('email')
+        search = self.driver.find_element(By.NAME, 'email')
         search.send_keys(loginId)
         search.send_keys(Keys.ENTER)
-        search = self.driver.find_element_by_name('password')
+        search = self.driver.find_element(By.NAME, 'password')
         search.send_keys(passWord)
         search.send_keys(Keys.ENTER)
-        sleep(40)
+        # sleep(40)
+        sleep(10)
         print("login!!!")
 
     def get_class_named_elements_from_product_list(self, className):
-        return self.driver.find_elements_by_class_name(className)
+        return self.driver.find_elements(By.CLASS_NAME, className)
 
     def get_multiple_dom_from_product_list_by_classname(self, classNames):
-        return self.driver.find_elements_by_css_selector(classNames)
+        return self.driver.find_elements(By.CSS_SELECTOR, classNames)
 
     def get_dom_from_product_list_by_tagname(self, tagName):
-        return self.driver.find_elements_by_tag_name(tagName)
+        return self.driver.find_elements(By.TAG_NAME, tagName)
 
     def open_product_page_directly_by_url(self, url):
         self.driver.get(url)
 
     def open_next_page(self):
-        aLasts = self.driver.find_elements_by_class_name("a-last")
+        aLasts = self.driver.find_elements(By.CLASS_NAME, "a-last")
         for aLast in aLasts:
             try:
-                aLast.find_element_by_tag_name("a").click()
+                aLast.find_element(By.TAG_NAME, "a").click()
                 break
             except:
                 continue
@@ -57,15 +60,27 @@ class AmazonTimeSalePage(BasePage):
     def wait_for_three_hrs_for_300_posts(self):
         intervals = [30, 60, 90, 120, 150]
         for interval in intervals:
-            print(f"{interval}分経過休憩🍵...")
+            print(f"{interval}分休憩🍵経過...")
             sleep(interval * 60)
         print("3時間休憩🍵終了！")
+
+    def wait_for_24_hrs(self):
+        total_minutes = 1440  # 24時間を分で表したもの
+        interval = 15  # 休憩間隔（15分）
+        total_elapsed = 0  # 経過時間の合計
+
+        while total_elapsed < total_minutes:
+            print(f"合計{total_elapsed}分休憩🍵経過...")
+            sleep(interval * 60)  # 15分休憩
+            total_elapsed += interval  # 経過時間を更新
+
+        print("24時間休憩🍵終了！")
 
     def extract_asin_info(self, item_tag):
         href = item_tag.get_attribute("href")
         if "/dp/" in href:
             asin = href.split('/dp/')[1].split('?')[0].split('/')[0]
-            image_url = item_tag.find_element_by_tag_name("img").get_attribute("src")
+            image_url = item_tag.find_element(By.TAG_NAME, "img").get_attribute("src")
             title = item_tag.get_attribute("title")
             return {"asin": asin, "title": title, "imageUrl": image_url}
         return None
@@ -137,9 +152,9 @@ class AmazonTimeSalePage(BasePage):
                 print(f"タイトルがうまく取得できていないためハッシュタグとサムネURLだけ投稿します{notTitleCount}")
 
             title = asin["title"]
-            categorys = ["Amazon", "タイムセール", "Amazonタイムセール"]
+            # categorys = ["Amazon", "タイムセール", "Amazonタイムセール"]
             # categorys = ["Amazon", "タイムセール", "Amazonタイムセール祭り"]
-            # categorys = ["Amazon", "タイムセール", "Amazonブラックフライデー"]
+            categorys = ["Amazon", "タイムセール", "Amazonブラックフライデー"]
             hashtags = "\n#" + ' #'.join(categorys)
             minusCount = len(hashtags)
 
@@ -147,23 +162,25 @@ class AmazonTimeSalePage(BasePage):
                 title = title[:-(len(title) - 140) - minusCount]
             updatePost = title + hashtags
 
-            if postCount > 0 and postCount % 300 == 0:
-                amazonPage.wait_for_three_hrs_for_300_posts()
+            # if postCount > 0 and postCount % 300 == 0:
+            if postCount > 0 and postCount % 50 == 0:
+                amazonPage.wait_for_24_hrs()
             try:
                 if createUrl in skipUrls:
                     print("新しい短縮URLが取得できない為、終了します。")
                     exit()
 
-                amazonPage.wait_check()
-                api.update_status(f"{updatePost}\n{createUrl}")
+                # amazonPage.wait_check()
+                api.create_tweet(text=f"{updatePost}\n{createUrl}")
                 skipUrls.append(createUrl)
                 postCount += 1
                 dt_now = datetime.datetime.now()
+                print("投稿成功しました！")
             except Exception as e:
                 print(e)
                 print("ーーーーーーーーーーーーーーー")
                 if "User is over daily status update limit" in str(e):
-                    amazonPage.wait_for_three_hrs_for_300_posts()
+                    amazonPage.wait_for_24_hrs()
                     postCount = 0
                 elif "duplicate" in str(e):
                     print("重複した投稿内容です")
@@ -192,7 +209,7 @@ class AmazonTimeSalePage(BasePage):
 
             for button in buttons:
                 try:
-                    url = button.find_element_by_tag_name("a").get_attribute("href")
+                    url = button.find_element(By.TAG_NAME, "a").get_attribute("href")
                     urls.append(url)
                     print(url)
                 except Exception as e:

@@ -5,12 +5,15 @@ API_KEY = 'tDTjqtriaaN36rqgWiM03dfAP'
 API_SECRET = 'iXedoTTXfwE0GekR1172VNnAOXmyUXbHJ1riPFdmkL1KSJCTKT'
 ACCESS_TOKEN = '2876575891-hEPoe4rxnJZcDRbQegiMpBLgEFXutkVjGnwC0dW'
 ACCESS_TOKEN_SECRET = 'Kgz0tIz3yFcqim2Qo2YB38nNBOPtabkNpsku7SWpHkaQ4'
-
+BEARER_TOKEN = 'AAAAAAAAAAAAAAAAAAAAANWLNwEAAAAA8DwLB3bUyh0wyzuaeUEWpnSXMvs%3DXwlYPnrweEtjHRROpdEUqJwYZX97U3sm4cgTA7A2PNOR2gPX80'
 
 affiliate_id = 'premierter0ad-22'
 today = datetime.date.today()
-titles_path = '/Users/ken.ebata/work/rpa/PythonRpa/outPutFile/titles.csv'
-skipTitlesPath = '/Users/ken.ebata/work/rpa/PythonRpa/outPutFile/skipTitles.csv'
+titles_path = '/Users/ebata/work/rpa/PythonRpa/outPutFile/titles.csv'
+skipTitlesPath = '/Users/ebata/work/rpa/PythonRpa/outPutFile/skipTitles.csv'
+
+# タイムセールで閲覧するページ数
+timesale_watch_page_count = 5
 
 skip_titles = [
     "スニーカー",

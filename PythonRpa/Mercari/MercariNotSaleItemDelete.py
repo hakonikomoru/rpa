@@ -1,5 +1,6 @@
 # coding:utf-8
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from selenium.webdriver.support.ui import Select
@@ -22,7 +23,7 @@ class MercariNotSaleItemDelete:
 
         pageItemMaxCount = 50
         chrome.get("https://www.mercari.com/jp/mypage/listings/listing/")
-        itemAtagLists = chrome.find_elements_by_class_name("mypage-item-link")
+        itemAtagLists = chrome.find_elements(By.CLASS_NAME, "mypage-item-link")
 
         xpath = "/html/body/div[@class='single-container']/main[@class='single-main']/section[@class='l-single-container buy-item-container']/div[@id='sell-container']/div/div[@class='sell-container-inner']/form[@class='sell-form'][2]/div[@class='sell-content sell-btn-box']/button[@class='btn-default btn-red']"
         throughCount = 0
@@ -34,8 +35,8 @@ class MercariNotSaleItemDelete:
             chrome.get(url)
             changeBox = chrome.find_element_by_class_name(
                 "listing-item-change-box")
-            redform = changeBox.find_element_by_tag_name("form")
-            btnRed = redform.find_element_by_tag_name("button").text
+            redform = changeBox.find_element(By.TAG_NAME, "form")
+            btnRed = redform.find_element(By.TAG_NAME, "button").text
             if btnRed == "出品を一旦停止する":
                 print("削除しない")
                 chrome.close()
@@ -47,15 +48,15 @@ class MercariNotSaleItemDelete:
             actions = ActionChains(chrome)
             actions.move_to_element(changeBox)
             actions.perform()
-            btnGray = changeBox.find_elements_by_tag_name("button")[1]
+            btnGray = changeBox.find_elements(By.TAG_NAME, "button")[1]
             btnGray.click()
             sleep(1)
             lContent = chrome.find_element_by_class_name("l-content")
             clearfix = lContent.find_element_by_class_name("clearfix")
-            form = clearfix.find_element_by_tag_name("form")
+            form = clearfix.find_element(By.TAG_NAME, "form")
             print(form)
             sleep(1)
-            btn = clearfix.find_element_by_tag_name("button").click()
+            btn = clearfix.find_element(By.TAG_NAME, "button").click()
             print(btn)
             # lContent.find_element_by_class_name("modal-btn modal-btn-submit").click()
             sleep(2)

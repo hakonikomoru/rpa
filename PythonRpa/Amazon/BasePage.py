@@ -30,6 +30,7 @@ class BasePage:
     def append_to_file(self, path, merge_arr):
         self.write_to_file(path, merge_arr, mode='a')
 
+    @staticmethod
     def shorten_url(longUrl):
         s = pyshorteners.Shortener()
     
@@ -39,7 +40,7 @@ class BasePage:
             total=3,  # リトライ回数を3回に設定
             backoff_factor=1,  # リトライ間隔の係数
             status_forcelist=[429, 500, 502, 503, 504],  # リトライするステータスコードを指定
-            method_whitelist=["HEAD", "GET", "OPTIONS", "POST", "PUT"]
+            allowed_methods=["HEAD", "GET", "OPTIONS", "POST", "PUT"]  # method_whitelistをallowed_methodsに変更
         )
         adapter = HTTPAdapter(max_retries=retry_strategy)
         session.mount("https://", adapter)

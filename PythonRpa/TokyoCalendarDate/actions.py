@@ -1,4 +1,5 @@
 # coding:utf-8
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from BasePage import BasePage
@@ -14,10 +15,10 @@ class LoginPage(BasePage):
         super().__init__(driver=driver, url=url)
 
     def login(self, loginId, passWord):
-        search = self.driver.find_element_by_name('email')
+        search = self.driver.find_element(By.NAME, 'email')
         search.send_keys(loginId)
         sleep(1)
-        search = self.driver.find_element_by_name('pass')
+        search = self.driver.find_element(By.NAME, 'pass')
         search.send_keys(passWord)
         sleep(1)
         search.send_keys(Keys.ENTER)
@@ -26,13 +27,13 @@ class LoginPage(BasePage):
         sleep(10)
 
     def ClassNameで複数のDOMを全て取得(self, className):
-        return self.driver.find_elements_by_class_name(className)
+        return self.driver.find_elements(By.CLASS_NAME, className)
 
     def ClassNameで複数のDOMをとる(self, className):
-        return self.driver.find_elements_by_class_name(className)[1]
+        return self.driver.find_elements(By.CLASS_NAME, className)[1]
 
     def ClassNameとkeyでDOMをとる(self, className, num):
-        return self.driver.find_elements_by_class_name(className)[num]
+        return self.driver.find_elements(By.CLASS_NAME, className)[num]
 
     def いいねボタンを取得(self): # >いいね<がテキストのボタンが多いため一つ下のdefを使用
         return self.driver.find_element_by_link_text('いいね')
@@ -75,7 +76,7 @@ class LoginPage(BasePage):
 
     def search_product(self, searchWord):
         search_box_selector = "field-keywords"
-        search = self.driver.find_element_by_name(search_box_selector)
+        search = self.driver.find_element(By.NAME, search_box_selector)
         search.send_keys(searchWord)
         search.send_keys(Keys.ENTER)
 

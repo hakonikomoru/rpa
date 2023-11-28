@@ -11,24 +11,27 @@ import os
 import config
 
 # APIの認証
-auth = tweepy.OAuthHandler(config.API_KEY, config.API_SECRET)
-auth.set_access_token(config.ACCESS_TOKEN, config.ACCESS_TOKEN_SECRET)
-# Twitterオブジェクトの生成
-api = tweepy.API(auth)
+api = tweepy.Client(
+    bearer_token=config.BEARER_TOKEN,
+    consumer_key=config.API_KEY,
+    consumer_secret=config.API_SECRET,
+    access_token=config.ACCESS_TOKEN,
+    access_token_secret=config.ACCESS_TOKEN_SECRET
+)
 
 # options = Options()
 # options = webdriver.ChromeOptions()
 # options.add_argument('--headless')
 # driver = webdriver.Chrome(options=options)
 # driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-driver = webdriver.Chrome(ChromeDriverManager().install())
-# driver = webdriver.Chrome()
+# ddriver = webdriver.Chrome(ChromeDriverManager().install())
+driver = webdriver.Chrome()
 
 sleep(5)
 urls = []
 
 dt_now = datetime.datetime.now()
-range_count = 80
+range_count = config.timesale_watch_page_count
 
 amazon_page = AmazonTimeSalePage(driver)
 amazon_page.open()
@@ -44,7 +47,7 @@ amazon_page.open_product_page_directly_by_url(
 )
 
 today = datetime.date.today().strftime("%Y-%m-%d")
-file_path = f"/Users/ken.ebata/work/rpa/PythonRpa/outPutFile/asins{today}.csv"
+file_path = f"/Users/ebata/work/rpa/PythonRpa/outPutFile/asins{today}.csv"
 
 if not os.path.exists(file_path):
     with open(file_path, mode='w') as f:

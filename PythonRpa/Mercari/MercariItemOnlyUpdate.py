@@ -37,10 +37,10 @@ mercariShopsPage.scroll_to_top()
 urls = []
 for itemDiv in itemDivs:
     dt_now = datetime.datetime.now()
-    urls.append(itemDiv.find_element_by_tag_name('a').get_attribute("href")+'_for_seller')
-    # print(itemDiv.find_element_by_tag_name('img').get_attribute("src"))
+    urls.append(itemDiv.find_element(By.TAG_NAME, 'a').get_attribute("href")+'_for_seller')
+    # print(itemDiv.find_element(By.TAG_NAME, 'img').get_attribute("src"))
 
-mercariShopsPage.write_output_to_file('/Users/ken.ebata/work/rpa/PythonRpa/outPutFile/mercari/mercariItemUrls'+str(dt_now.strftime('%Y-%m-%d %H-%M'))+'.csv', urls)
+mercariShopsPage.write_output_to_file('/Users/ebata/work/rpa/PythonRpa/outPutFile/mercari/mercariItemUrls'+str(dt_now.strftime('%Y-%m-%d %H-%M'))+'.csv', urls)
 
 # loginは1分くらいで処理を終了させる
 
@@ -62,6 +62,6 @@ mercariShopsPage.write_output_to_file('/Users/ken.ebata/work/rpa/PythonRpa/outPu
 #     sleep(5)
 #     mercariShopsPage.transition_to_edit_screen('/edit')
 #     buttons = mercariShopsPage.get_one_dom_from_product_list_by_classname('css-5k21z4')
-#     buttons.find_elements_by_tag_name('button')[0].click()
+#     buttons.find_elements(By.TAG_NAME, 'button')[0].click()
 #     sleep(5)
 #     mercariShopsPage.open_product_page_directly_by_url('https://mercari-shops.com/seller/shops/3uFoNvuTKzdVWB8MRC72dQ/products')

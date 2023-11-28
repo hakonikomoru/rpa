@@ -32,7 +32,7 @@ class MercariLogin:
         sleep(2)
         for n in range(10):
             try:
-                chrome.find_element_by_name("password").send_keys("hnhn8787")
+                chrome.find_element(By.NAME, "password").send_keys("hnhn8787")
                 chrome.find_element_by_class_name("CwaK9").click()
                 break
             except:

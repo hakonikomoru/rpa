@@ -9,7 +9,7 @@ driver = webdriver.Chrome()
 driver.get("https://www.mercari.com/jp/search/?sort_order=&keyword=Nintendo+Switch&category_root=&brand_name=&brand_id=&size_group=&price_min=30000&price_max=&item_condition_id%5B1%5D=1&shipping_payer_id%5B2%5D=1&status_on_sale=1")
 
 # 検索語として「selenium」と入力し、Enterキーを押す。
-search = driver.find_element_by_name('q')
+search = driver.find_element(By.NAME, 'q')
 search.send_keys("selenium automation")
 search.send_keys(Keys.ENTER)
 # タイトルに「Selenium - Web Browser Automation」と一致するリンクをクリックする。

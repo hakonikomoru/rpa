@@ -1,11 +1,10 @@
 # coding:utf-8
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from BasePage import BasePage
 import datetime
 import requests
-from wordpress_xmlrpc.methods.posts import GetPosts, NewPost
-from wordpress_xmlrpc import Client, WordPressPost
 import tweepy
 
 
@@ -16,16 +15,16 @@ class MyAmazonPage(BasePage):
         super().__init__(driver=driver, url=url)
 
     def get_class_named_elements_from_product_list(self, className):
-        return self.driver.find_elements_by_class_name(className)
+        return self.driver.find_elements(By.CLASS_NAME, className)
 
     def get_class_named_elements_from_product_listセレクター版(self, className):
-        return self.driver.find_elements_by_css_selector(className)
+        return self.driver.find_element(By.CSS_SELECTOR, className)
 
     def open_product_page_directly_by_url(self, url):
         self.driver.get(url)
 
     def click_twitter_button(self):
-        aTags = self.driver.find_elements_by_tag_name("a")
+        aTags = self.driver.find_elements(By.TAG_NAME, "a")
         for aTag in aTags:
             try:
                 if "Twitterでシェアする" in aTag.get_attribute("title"):
@@ -38,7 +37,7 @@ class MyAmazonPage(BasePage):
         # タブを見るカーソルが変わっていないため、一度タブを切り替える
         self.driver.switch_to.window(self.driver.window_handles[0])
         self.driver.switch_to.window(self.driver.window_handles[1])
-        spanTags = self.driver.find_elements_by_tag_name("span")
+        spanTags = self.driver.find_elements(By.TAG_NAME, "span")
 
         for spanTag in spanTags:
             try:
@@ -127,7 +126,7 @@ class MyAmazonPage(BasePage):
             for itemsTag in itemsTags:
                 try:
                     if "/dp/" in itemsTag.get_attribute("href"):
-                        title = itemsTag.find_element_by_tag_name("img").get_attribute("alt")
+                        title = itemsTag.find_element(By.TAG_NAME, "img").get_attribute("alt")
                         # if "ガンダム" not in title:
                         #     continue
                         # ASINだけを抜く
@@ -136,7 +135,7 @@ class MyAmazonPage(BasePage):
                                 "asin": str(itemsTag.get_attribute(
                                     "href").split('/dp/')[1].split('/')[0]),
                                 "title": title,
-                                "imageUrl": itemsTag.find_element_by_tag_name(
+                                "imageUrl": itemsTag.find_element(By.TAG_NAME, 
                                     "img").get_attribute("src")
                             }
                         )

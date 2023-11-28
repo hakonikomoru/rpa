@@ -4,11 +4,11 @@ from selenium.webdriver.chrome.options import Options
 from pages.MyAmazonPage import MyAmazonPage
 from webdriver_manager.chrome import ChromeDriverManager
 
-options = webdriver.ChromeOptions()
-options.add_argument('--headless')
-driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+# options = webdriver.ChromeOptions()
+# options.add_argument('--headless')
+# driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 # driver = webdriver.Chrome(options=options)
-# driver = webdriver.Chrome()
+driver = webdriver.Chrome()
 # twitterLoginPage = TwitterLoginPage(driver)
 # twitterLoginPage.open()
 # twitterLoginPage.Twitterlogin("premier_teru", "hnhn8787")
@@ -21,7 +21,7 @@ urls = [
     # 'https://www.amazon.co.jp/s?k=%E3%82%B9%E3%83%8E%E3%83%BC%E3%83%94%E3%83%BC%E3%82%AF&i=sporting&rh=n%3A14304371%2Cp_89%3A%E3%82%B9%E3%83%8E%E3%83%BC%E3%83%94%E3%83%BC%E3%82%AF%28snow+peak%29&dc&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&qid=1617929684&rnid=2321255051&ref=sr_nr_p_89_1'
     # 'https://www.amazon.co.jp/s?rh=n%3A14304371%2Cp_89%3ASnow+Peak%28%E3%82%B9%E3%83%8E%E3%83%BC%E3%83%94%E3%83%BC%E3%82%AF%29'
 ]
-for num in range(50):
+for num in range(1):
     for url in urls:
         amazonPage.post_vertical_page_product(url, aod='')
 

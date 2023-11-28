@@ -1,11 +1,11 @@
 # coding:utf-8
 import requests
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from BasePage import BasePage
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.common.by import By
 # CLASS_NAME = 'class name'
 # CSS_SELECTOR = 'css selector'
 # ID = 'id'
@@ -24,16 +24,16 @@ class TwitterLoginPage(BasePage):
 
     def Twitterlogin(self, userName, passWord):
         sleep(10)
-        # search = self.driver.find_element_by_name("session[username]")
+        # search = self.driver.find_element(By.NAME, "session[username]")
         # search.send_keys(userName)
-        # search = self.driver.find_element_by_name("session[password]")
+        # search = self.driver.find_element(By.NAME, "session[password]")
         # search.send_keys(passWord)
         # search.send_keys(Keys.ENTER)
-        search = self.driver.find_element_by_name("username")
+        search = self.driver.find_element(By.NAME, "username")
         search.send_keys(userName)
         search.send_keys(Keys.ENTER)
         sleep(5)
-        search = self.driver.find_element_by_name("password")
+        search = self.driver.find_element(By.NAME, "password")
         search.send_keys(passWord)
         sleep(5)
         # 自分でろぐいんButtonを押す
@@ -47,7 +47,7 @@ class TwitterPage(BasePage):
         super().__init__(driver=driver, url=url)
 
     def get_class_named_elements_from_product_list(self, className):
-        return self.driver.find_elements_by_class_name(className)
+        return self.driver.find_elements(By.CLASS_NAME, className)
 
     def open_product_page_directly_by_url(self, url):
         self.driver.get(url)
@@ -100,24 +100,24 @@ class TwitterPage(BasePage):
             sleep(1)
         
         sleep(5)
-        focuss = self.driver.find_elements_by_class_name('css-901oao')
+        focuss = self.driver.find_elements(By.CLASS_NAME, 'css-901oao')
         for focus in focuss:
             print(focus)
             try:
                 if focus.get_attribute("class") == 'css-901oao' and 'フォロー中' in focus.text:
-                    followerLists = focus.find_element_by_tag_name(
-                        'div').find_elements_by_tag_name('div')
+                    followerLists = focus.find_element(By.TAG_NAME, 
+                        'div').find_elements(By.TAG_NAME, 'div')
                     for followerList in followerLists:
                         if 'position: absolute; width: 100%; transform: translateY(' not in followerList.get_attribute("style"):
                             continue
-                        if "フォローされています" == followerList.find_elements_by_tag_name('span')[3].text:
+                        if "フォローされています" == followerList.find_elements(By.TAG_NAME, 'span')[3].text:
                             continue
-                        divs = followerList.find_elements_by_tag_name('div')
+                        divs = followerList.find_elements(By.TAG_NAME, 'div')
                         for unfollower in divs:
                             try:
                                 if "-unfollow" in unfollower.get_attribute("data-testid"):
                                     unfollower.click()
-                                    spans = self.driver.find_elements_by_tag_name(
+                                    spans = self.driver.find_elements(By.TAG_NAME, 
                                         'span')
                                     for span in spans:
                                         if "フォロー解除" in span.text:
@@ -135,23 +135,23 @@ class TwitterPage(BasePage):
             sleep(1)
         
         sleep(5)
-        focuss = self.driver.find_elements_by_class_name('css-1dbjc4n')
+        focuss = self.driver.find_elements(By.CLASS_NAME, 'css-1dbjc4n')
         for focus in focuss:
             try:
                 if focus.get_attribute("class") == 'css-1dbjc4n' and 'フォロー中' in focus.text:
-                    followerLists = focus.find_element_by_tag_name(
-                        'div').find_elements_by_tag_name('div')
+                    followerLists = focus.find_element(By.TAG_NAME, 
+                        'div').find_elements(By.TAG_NAME, 'div')
                     for followerList in followerLists:
                         if 'position: absolute; width: 100%; transform: translateY(' not in followerList.get_attribute("style"):
                             continue
-                        if "フォローされています" == followerList.find_elements_by_tag_name('span')[3].text:
+                        if "フォローされています" == followerList.find_elements(By.TAG_NAME, 'span')[3].text:
                             continue
-                        divs = followerList.find_elements_by_tag_name('div')
+                        divs = followerList.find_elements(By.TAG_NAME, 'div')
                         for unfollower in divs:
                             try:
                                 if "-unfollow" in unfollower.get_attribute("data-testid"):
                                     unfollower.click()
-                                    spans = self.driver.find_elements_by_tag_name(
+                                    spans = self.driver.find_elements(By.TAG_NAME, 
                                         'span')
                                     for span in spans:
                                         if "フォロー解除" in span.text:
@@ -188,7 +188,7 @@ class TwitterPage(BasePage):
                 # for nn in range(10):
                 #     self.driver.execute_script('window.scroll(0,15000)')
                 self.driver.execute_script('window.scroll(0,100000)')
-                spanTags = self.driver.find_elements_by_tag_name("span")
+                spanTags = self.driver.find_elements(By.TAG_NAME, "span")
                 for spanTag in spanTags:
                     try:
                         if "フォロー" == spanTag.text:
@@ -225,7 +225,7 @@ class TwitterPage(BasePage):
                 # for nn in range(10):
                 #     self.driver.execute_script('window.scroll(0,15000)')
                 self.driver.execute_script('window.scroll(0,100000)')
-                spanTags = self.driver.find_elements_by_tag_name("span")
+                spanTags = self.driver.find_elements(By.TAG_NAME, "span")
                 for spanTag in spanTags:
                     try:
                         if "フォロー" == spanTag.text:
@@ -237,7 +237,7 @@ class TwitterPage(BasePage):
                         continue
 
     def click_twitter_button(self):
-        aTags = self.driver.find_elements_by_tag_name("a")
+        aTags = self.driver.find_elements(By.TAG_NAME, "a")
         for aTag in aTags:
             try:
                 if "Twitterでシェアする" in aTag.get_attribute("title"):
@@ -250,7 +250,7 @@ class TwitterPage(BasePage):
         # タブを見るカーソルが変わっていないため、一度タブを切り替える
         self.driver.switch_to.window(self.driver.window_handles[0])
         self.driver.switch_to.window(self.driver.window_handles[1])
-        spanTags = self.driver.find_elements_by_tag_name("span")
+        spanTags = self.driver.find_elements(By.TAG_NAME, "span")
 
         for spanTag in spanTags:
             try:

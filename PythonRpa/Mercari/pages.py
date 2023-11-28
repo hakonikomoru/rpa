@@ -1,4 +1,5 @@
 # coding:utf-8
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from BasePage import BasePage
@@ -17,17 +18,17 @@ class MercariShopsPage(BasePage):
         # self.driver.find_element_by_link_text('login').click()
         # 検索語として「selenium」と入力し、Enterキーを押す。
         sleep(5)
-        search = self.driver.find_element_by_name('email')
+        search = self.driver.find_element(By.NAME, 'email')
         search.send_keys(loginId)
         sleep(2)
-        search = self.driver.find_element_by_name('password')
+        search = self.driver.find_element(By.NAME, 'password')
         search.send_keys(passWord)
         sleep(2)
         search.send_keys(Keys.ENTER)
         print('login!!!')
 
     def get_class_named_elements_from_product_list(self, className):
-        return self.driver.find_elements_by_class_name(className)
+        return self.driver.find_elements(By.CLASS_NAME, className)
 
     def get_one_dom_from_product_list_by_classname(self, className):
         return self.driver.find_element_by_class_name(className)
@@ -36,7 +37,7 @@ class MercariShopsPage(BasePage):
         return self.driver.find_element_by_xpath(selector)
 
     def get_dom_from_product_list_by_tagname(self, tagName):
-        return self.driver.find_elements_by_tag_name(tagName)
+        return self.driver.find_elements(By.TAG_NAME, tagName)
     
     def open_product_page_directly_by_url(self, url):
         self.driver.get(url)

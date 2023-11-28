@@ -15,9 +15,9 @@ class RakutenENaviLoginPage(BasePage):
 
     def login(self, loginId, passWord):
         # 検索語として「selenium」と入力し、Enterキーを押す。
-        search = self.driver.find_element_by_name('u')
+        search = self.driver.find_element(By.NAME, 'u')
         search.send_keys(loginId)
-        search = self.driver.find_element_by_name('p')
+        search = self.driver.find_element(By.NAME, 'p')
         search.send_keys(passWord)
         search.send_keys(Keys.ENTER)
 
@@ -39,7 +39,7 @@ class ClickDePointPage(BasePage):
                 continue
             dom = self.driver.find_element_by_css_selector(
                 self.クリックしてポイント画面DOMselector)
-            firstATag = dom.find_elements_by_tag_name("a")[int(n)]
+            firstATag = dom.find_elements(By.TAG_NAME, "a")[int(n)]
             firstATag.click()
             sleep(5)
             handleArray = self.driver.window_handles
