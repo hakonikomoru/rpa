@@ -1,0 +1,12 @@
+{
+  "name": "rpa",
+  "private": true,
+  "description": "Python RPA scripts (Amazon 等)",
+  "scripts": {
+    "lint": "python3 -m ruff check tests",
+    "format": "python3 -m ruff format tests",
+    "format:check": "python3 -m ruff format --check tests",
+    "test": "python3 -m pytest -q",
+    "precommit:check": "npm run lint && npm run format:check && npm run test"
+  }
+}

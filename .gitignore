@@ -1,0 +1,13 @@
+.env
+.env.local
+.env.*.local
+PythonRpa/Amazon/.env
+__pycache__/
+*.py[cod]
+.PythonRpa/**/__pycache__/
+.DS_Store
+geckodriver.log
+*.log
+PythonRpa/outPutFile/*.csv
+PythonRpa/outPutFile/*.tsv
+get-pip.py

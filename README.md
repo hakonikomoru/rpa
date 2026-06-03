@@ -1,3 +1,20 @@
+# Amazon セール ASIN 収集（更新）
+
+```bash
+cd /Users/ebata/app/rpa
+pip3 install -r requirements.txt
+
+cd PythonRpa/Amazon
+# ログインなし・全ページ巡回（.env: AMAZON_SKIP_LOGIN=1, AMAZON_DEALS_PAGES=0）
+python3 collect_sale_asins.py --all --no-deal-pages --report
+```
+
+収集元: `gp/goldbox/all-deals`、タイムセール検索、all-deals 上のセールリンク。HTML 埋め込み JSON の ASIN も抽出。
+
+出力: `PythonRpa/outPutFile/asinsYYYY-MM-DD.csv`（従来形式のカンマ区切り ASIN）
+
+---
+
 # まず最初に
 python3の環境はpip3でインストールを行い開発環境を行ってください。
 なぜかというと、pip3のほうが、pythonのライブラリが豊富ですし、日本の検索エンジンでも検索が行い安く

@@ -1,9 +1,22 @@
+import sys
+from pathlib import Path
+
+_AMAZON_ROOT = Path(__file__).resolve().parents[1]
+if str(_AMAZON_ROOT) not in sys.path:
+    sys.path.insert(0, str(_AMAZON_ROOT))
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from BasePage import BasePage
 from time import sleep
 import datetime
 import config
+from asin_utils import asin_from_href
+from sale_asin_collector import (
+    collect_asins_from_deal_landing,
+    collect_asins_on_current_page,
+    paginate_deals_list,
+)
 
 
 class AmazonTimeSalePage(BasePage):
@@ -77,40 +90,34 @@ class AmazonTimeSalePage(BasePage):
         print("24時間休憩🍵終了！")
 
     def extract_asin_info(self, item_tag):
-        href = item_tag.get_attribute("href")
-        if "/dp/" in href:
-            asin = href.split('/dp/')[1].split('?')[0].split('/')[0]
-            image_url = item_tag.find_element(By.TAG_NAME, "img").get_attribute("src")
-            title = item_tag.get_attribute("title")
-            return {"asin": asin, "title": title, "imageUrl": image_url}
-        return None
+        href = item_tag.get_attribute("href") or ""
+        asin = asin_from_href(href)
+        if not asin:
+            return None
+        image_url = ""
+        title = item_tag.get_attribute("title") or ""
+        try:
+            image_url = item_tag.find_element(By.TAG_NAME, "img").get_attribute("src") or ""
+        except Exception:
+            pass
+        return {"asin": asin, "title": title, "imageUrl": image_url}
 
     def collect_asins(self, url, atag_asins=None):
-        if "/dp/" in url:
-            print(f"「/dp/」を含むURLの為スキップしました。：{url}")
-            return []
+        asins = list(atag_asins or [])
+        dt_now = datetime.datetime.now()
+        print(f"ASIN収集開始：{dt_now.strftime('%Y-%m-%d %H:%M:%S')} url={url[:80]}")
 
-        self.open_product_page_directly_by_url(url)
-        items_tags = self.get_class_named_elements_from_product_list("a-link-normal")
-
-        asins = atag_asins or []
+        try:
+            extra = collect_asins_from_deal_landing(self.driver, url)
+            for rec in extra:
+                if not any(a["asin"] == rec["asin"] for a in asins):
+                    asins.append(rec)
+                    print(f'{rec["asin"]}：{rec.get("title", "")}')
+        except Exception as e:
+            print(f"セール詳細の取得に失敗: {e}")
 
         dt_now = datetime.datetime.now()
-        print(f"ASIN収集開始：{dt_now.strftime('%Y-%m-%d %H:%M:%S')}")
-
-        for item_tag in items_tags:
-            try:
-                asin_info = self.extract_asin_info(item_tag)
-                if asin_info:
-                    asins.append(asin_info)
-                    print(f'{asin_info["asin"]}：{asin_info["title"]}')
-                    print(f'画像URL：{asin_info["imageUrl"]}')
-            except Exception as e:
-                print(f"selectorの取得に失敗しました。: {e}")
-
-        dt_now = datetime.datetime.now()
-        print(f"ASIN収集終了：{dt_now.strftime('%Y-%m-%d %H:%M:%S')}")
-
+        print(f"ASIN収集終了：{dt_now.strftime('%Y-%m-%d %H:%M:%S')} ({len(asins)} 件)")
         return asins
 
     def clean_title(self, title, splits):
@@ -202,39 +209,28 @@ class AmazonTimeSalePage(BasePage):
                     skipAsins = list(set(oldAsins.split(',')))
 
     def process_range_count(self, amazon_page, range_count, skip_atags_asins):
+        """一覧を range_count ページ分走査し、deal URL と一覧上の ASIN を返す。"""
+        all_urls = []
+        listing_asins = []
+
         for num in range(range_count):
-            print(f"{num + 1}/{range_count} 回中")
-            buttons = self.get_multiple_dom_from_product_list_by_classname(".DealGridItem-module__dealItemContent_1vFddcq1F8pUxM8dd9FW32")
-            urls = []
+            print(f"{num + 1}/{range_count} ページ目")
+            records, deal_urls = collect_asins_on_current_page(self.driver)
 
-            for button in buttons:
-                try:
-                    url = button.find_element(By.TAG_NAME, "a").get_attribute("href")
-                    urls.append(url)
+            for rec in records:
+                if rec["asin"] not in skip_atags_asins:
+                    skip_atags_asins.append(rec["asin"])
+                    listing_asins.append(rec)
+                    print(f"{rec['asin']}：{rec.get('title', '')}")
+
+            for url in deal_urls:
+                if url not in all_urls:
+                    all_urls.append(url)
                     print(url)
-                except Exception as e:
-                    print(e)
-                    print("不要なボタンの為スキップしました")
-                    print("ーーーーーーーーーーーーーーー")
 
-            atags = amazon_page.get_dom_from_product_list_by_tagname("a")
-            atag_asins = []
+            if num < range_count - 1:
+                if not paginate_deals_list(self.driver):
+                    print("次ページなし")
+                    break
 
-            for atag in atags:
-                try:
-                    href = atag.get_attribute("href")
-                    if atag.get_attribute("id") == "dealTitle" and "/dp/" in href:
-                        asin = href.split('/dp/')[1].split('?')[0].split('/')[0]
-                        if asin not in skip_atags_asins:
-                            atag_asins.append({"asin": asin, "title": atag.text, "imageUrl": ""})
-                            skip_atags_asins.append(asin)
-                            print(asin)
-                            print(atag.text)
-                except Exception as e:
-                    print(e)
-                    print("不要なaタグの為スキップしました")
-                    print("ーーーーーーーーーーーーーーー")
-
-            amazon_page.open_next_page()
-
-        return urls
+        return all_urls, listing_asins
