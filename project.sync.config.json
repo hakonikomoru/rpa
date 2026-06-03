@@ -1,0 +1,10 @@
+{
+  "repo": "hakonikomoru/rpa",
+  "rootLabel": "rpa",
+  "treeMaxDepth": 2,
+  "markers": [
+    "meta",
+    "directory-tree"
+  ],
+  "treeEntries": []
+}
