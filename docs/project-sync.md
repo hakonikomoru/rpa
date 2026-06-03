@@ -3,7 +3,7 @@
 > ChatGPT / 他 AI 向けの同期用ドキュメント。実装前に読むこと。
 
 <!-- sync:auto:meta:start -->
-最終更新の想定リポジトリ: `hakonikomoru/rpa`（`main`・`1b84c0a`・2026-06-03・`npm run sync:project-docs` 自動反映）
+最終更新の想定リポジトリ: `hakonikomoru/rpa`（`main`・`0aeef85`・2026-06-03・`npm run sync:project-docs` 自動反映）
 <!-- sync:auto:meta:end -->
 
 ---
